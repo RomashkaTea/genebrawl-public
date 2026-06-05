@@ -2,45 +2,14 @@ import {Libc} from "../libs/Libc";
 import {LogicVersion} from "../logic/LogicVersion";
 import ObjC from "frida-objc-bridge";
 
-const VALID_PACKAGE_NAMES_FOR_ENVIRONMENT: { [environment: string]: string[]; } = {
-    "dev": [
-        "gene.brawl.dev",
-        "gene.brawl.release",
-        "com.supercell.brawlstars",
-        "com.supercell.brawlstarts",
-        "bsd.suitcase.release"
-    ],
-
-    "prod": [
-        "gene.brawl.release"
-    ]
-};
-
 export class PackageInfo {
-    static isPackageNameValid(name: string): boolean {
-        let scriptEnvironment = LogicVersion.scriptEnvironment;
-
-        if (!VALID_PACKAGE_NAMES_FOR_ENVIRONMENT[scriptEnvironment].includes(name)) {
-            console.error(`Package name ${name} is invalid in ${scriptEnvironment} environment.`);
-        }
-
-
-        /// #if DEBUG
-        if (LogicVersion.isDeveloperBuild()) // ignore package name in dev build
-            return true;
-        /// #endif
-
-        return VALID_PACKAGE_NAMES_FOR_ENVIRONMENT[scriptEnvironment].includes(name);
-    }
-
     static getPackageName(): string | null {
         let fd = Libc.open("/proc/self/cmdline", 0, "r");
         if (fd != -1) {
             let buffer = Libc.malloc(256);
             Libc.read(fd, buffer, 256);
             Libc.close(fd);
-            let name = buffer.readUtf8String();
-            return this.isPackageNameValid(name!) ? name : "";
+            return buffer.readUtf8String();
         }
 
         return null;
