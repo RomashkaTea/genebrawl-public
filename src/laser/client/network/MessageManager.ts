@@ -10,25 +10,19 @@ import {StringTable} from "../../../logic/data/StringTable";
 import {LocalizationManager} from "../../../gene/localization/index";
 import {BattleEndMessage} from "../../../logic/message/battle/BattleEndMessage";
 import {PlayAgainMessage} from "../../../logic/message/battle/PlayAgainMessage";
-import {HomeMode} from "../../../logic/home/HomeMode";
-import {GameStateManager} from "../state/GameStateManager";
 import {LatencyData} from "../../../logic/latency/LatencyData";
 import {LatencyManager} from "./LatencyManager";
 import {UdpConnectionInfoMessage} from "../../../logic/message/udp/UdpConnectionInfoMessage";
-import {HashTagCodeGenerator} from "../../../titan/logic/util/HashTagCodeGenerator";
 import {LogicVersion} from "../../../logic/LogicVersion";
 import {StartLoadingMessage} from "../../../logic/message/battle/StartLoadingMessage";
 import {UsefulInfo} from "../../../gene/features/UsefulInfo";
-import {SkinChanger} from "../../../gene/features/SkinChanger";
 import {Libc} from "../../../libs/Libc";
 import {BattleMode} from "../../../logic/battle/BattleMode";
 import {GameMain} from "../GameMain";
 import {GUI} from "../../../titan/flash/gui/GUI";
 import {PlayerProfileMessage} from "../../../logic/message/home/PlayerProfileMessage";
-import {GetPlayerProfileMessage} from "../../../logic/message/home/GetPlayerProfileMessage";
 import {BattleProfile} from "../../../utils/BattleProfile";
 import {LogicDataTables} from "../../../logic/data/LogicDataTables";
-import {ClaimVouncherFailedMessageReceived} from "../../../logic/message/home/ClaimVouncherFailedMessageReceived";
 import {EDebugCategory} from "../../../gene/debug/DebugMenuCategory";
 import {TeamStreamMessage} from "../../../logic/message/team/TeamStreamMessage";
 
@@ -42,10 +36,6 @@ const latencyTestsOffset = 392;
 
 const MessageManager_receiveMessage = new NativeFunction( // "BrawlTvManager processed msg of type %d"
     Libg.offset(0x68F6C4, 0x232A54), 'bool', ['pointer', 'pointer']
-);
-
-const MessageManager_update = new NativeFunction( // "TID_MATCHMAKE_FAILED_%i"
-    Libg.offset(0x695F2C, 0x2386E8), 'void', ['pointer', 'float']
 );
 
 export class MessageManager {
@@ -69,12 +59,6 @@ export class MessageManager {
 
             MessageManager.receiveMessage(piranhaMessage);
         });
-
-        if (LogicVersion.isDeveloperBuild()) {
-            /// #if DEBUG
-            // Here was something but that's a thing we don't want to make public.
-            /// #endif
-        }
     }
 
     static getLatencyTests(): LatencyData[] {
@@ -264,9 +248,6 @@ Account tier: ${message.getAccountTier()}
             case 24131:
                 this.onTeamStreamMessageReceived(message as TeamStreamMessage);
                 break;
-            case 28275:
-                this.onClaimVouncherFailedMessageReceived(message as ClaimVouncherFailedMessageReceived);
-                break;
         }
     }
 
@@ -314,12 +295,6 @@ Account tier: ${message.getAccountTier()}
     }
 
     private static onStartLoadingMessageReceived(message: StartLoadingMessage) {
-        /// #if DEBUG
-        // oh here also was something but guess what?
-        /// #endif
-
-        SkinChanger.load(message);
-
         this.ownPlayerTeam = message.getOwnPlayerTeam();
 
         let info = "";
@@ -383,15 +358,6 @@ Account tier: ${message.getAccountTier()}
         UsefulInfo.setBattleInfo(info);
     }
 
-    private static onClaimVouncherFailedMessageReceived(message: ClaimVouncherFailedMessageReceived) {
-        /// #if DEBUG
-        if (LogicVersion.isDeveloperBuild()) {
-            const messageFake = LogicLaserMessageFactory.createMessage(20108);
-            message.instance.writePointer(messageFake);
-        }
-        /// #endif
-    }
-
     private static onPlayerProfileMessageReceived(message: PlayerProfileMessage) {
         const playerProfile = message.getPlayerProfile();
 
@@ -419,12 +385,5 @@ Account tier: ${message.getAccountTier()}
         }
 
         return null;
-    }
-
-    private static addPendingProfile(battleProfile: BattleProfile) {
-        if (!MessageManager.getPendingProfile(battleProfile.playerId)) {
-            MessageManager.pendingProfiles.push(battleProfile);
-            MessageManager.sendMessage(new GetPlayerProfileMessage(battleProfile.playerId));
-        }
     }
 }

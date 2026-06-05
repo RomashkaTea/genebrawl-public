@@ -10,11 +10,11 @@ const closedir = Module.getGlobalExportByName('closedir');
 
 export class TestCase {
     static async doCase() {
-        // Here was something but that's definitely not a thing that should be public.
+
     }
 
     static test() {
-        // maybe
+
     }
 
     static dialogListener: INativeDialogListener = new INativeDialogListener(TestCase.listenerTest);

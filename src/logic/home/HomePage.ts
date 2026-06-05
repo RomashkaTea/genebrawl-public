@@ -10,28 +10,10 @@ const HomePage_startGame = new NativeFunction( // "TID_EXTRACTION_NOT_ENOUGH_TRO
     Libg.offset(0x7BEF08, 0x32E514), 'void', ['pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']
 );
 
-const WaitingPopup_refreshCancelButton = new NativeFunction(
-    Libg.offset(-1, -1), 'void', ['pointer']
-);
-
-const RandomRewardPopup_RandomRewardPopup = new NativeFunction(
-    Libg.offset(-1, -1), 'void', ['pointer', 'pointer', 'pointer', 'pointer']
-); // "random_reward_opening"
-
 export class HomePage {
     static patch() {
         this.patchBackground();
         this.patchStartGame();
-
-        /* unstable fixme
-        Interceptor.replace(RandomRewardPopup_RandomRewardPopup, new NativeCallback(function (instance, data, a3, a4) {
-            a4 = ptr(1)
-
-            RandomRewardPopup_RandomRewardPopup(instance, data, a3, a4);
-
-            instance.add(428).writeInt(1);
-            return instance;
-        }, 'pointer', ['pointer', 'pointer', 'pointer', 'pointer']));*/
     }
 
     private static patchStartGame() {

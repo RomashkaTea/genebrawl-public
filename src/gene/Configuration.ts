@@ -51,8 +51,6 @@ export class Configuration {
     static movementBasedAutoshoot: boolean;
     static skipBattleEndReplay: boolean;
     static moveToAlly: boolean;
-    static skinChanger: boolean = false;
-    static skinChangerOnline: boolean = false;
     static themeId: number = -1;
     static themeMusicId: number = -1;
     static useLegacyThemeMode: boolean = false;
@@ -94,9 +92,6 @@ export class Configuration {
 
     // Battle servers
     static regionId: number = -1;
-
-    // skinChanger
-    static skinChangerObjects: { [key: number]: number; } = {};
 
     // Visual name
     static accountNames: { [key: string]: string; } = {};

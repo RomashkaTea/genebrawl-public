@@ -38,7 +38,6 @@ import {HomeMode} from "../../logic/home/HomeMode";
 import {GlobalID} from "../../logic/data/GlobalID";
 import {Storage} from "../Storage";
 import {LogicData} from "../../logic/data/LogicData";
-import {SkinChanger} from "../features/SkinChanger";
 import {ToggleDebugMenuButton} from "./ToggleDebugMenuButton";
 import {ProfileByTagPopup} from "../popups/ProfileByTagPopup";
 import {NativeDialog} from "../../titan/utils/NativeDialog";
@@ -205,7 +204,6 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("UNLOCK_GEARS", 117, -1, 2, EDebugCategory.GEARS);
         this.createDebugMenuButton("UNLOCK_CURRENT_BRAWL_PASS_SEASON", 0x9F, 0, 2, EDebugCategory.BRAWL_PASS);
         this.createDebugMenuButton("UNLOCK_CURRENT_BRAWL_PASS_PLUS_SEASON", 0x9F, -1, 2, EDebugCategory.BRAWL_PASS);
-        this.createDebugMenuButton("SKIN_CHANGER", -1, -1, 0, EDebugCategory.SKIN_CHANGER, Configuration.skinChanger ? 1 : 0);
         this.createDebugMenuButton("HIDE_ULTI_AIMING", -1, -1, 0, EDebugCategory.BATTLE, Configuration.showUlti ? 0 : 1);
 
         this.createDebugMenuButton("STATIC_BACKGROUND", -1, -1, 2, EDebugCategory.GFX, Configuration.staticBackground ? 1 : 0);
