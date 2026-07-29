@@ -1,5 +1,6 @@
 import {Configuration} from "../../../gene/Configuration";
 import {Libc} from "../../../libs/Libc";
+import {IPatchable} from "../../../utils/IPatchable";
 
 const STAGE_SERVER_HOST = "stage.brawlstarsgame.com";
 const PROD_SERVER_HOST = "game.brawlstarsgame.com";
@@ -13,6 +14,10 @@ const ports = [
 ];
 
 export class ServerConnection {
+    static patch() {
+        this.setupMessaging();
+    }
+
     static setupMessaging() {
         Interceptor.replace(Module.getGlobalExportByName("getaddrinfo")!, new NativeCallback(function (node, service, hints, res) {
             if (ports.includes(service.readUtf8String()!)

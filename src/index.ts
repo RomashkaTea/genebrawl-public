@@ -50,6 +50,7 @@ import { GUI } from "./titan/flash/gui/GUI";
 import { DataIcon } from "./titan/flash/DataIcon";
 import { GradientNickname } from "./gene/features/GradientNickname";
 import { LogicBattleModeClient } from "./logic/battle/LogicBattleModeClient";
+import { PatchManager } from "./utils/IPatchable";
 
 // global stuff
 declare global {
@@ -119,10 +120,12 @@ function printInfo() {
 }
 
 function setupNetwork() {
-    ServerConnection.setupMessaging();
-    MessageManager.patch();
-    LogicLaserMessageFactory.patch();
-    LatencyManager.patch();
+    PatchManager.patch([
+        ServerConnection,
+        MessageManager,
+        LogicLaserMessageFactory,
+        LatencyManager
+    ]);
 }
 
 function setupCustomAssets() {
@@ -137,66 +140,73 @@ function setupCustomAssets() {
 }
 
 function setupAvatarHooks() {
-    LogicClientAvatar.patch();
+    PatchManager.patch([LogicClientAvatar]);
 }
 
 function setupHomeHooks() {
-    LogicClientHome.patch();
-    HomeMode.patch();
-    PlayerProfile.patch();
-    FriendEntry.patch();
-    PlayerInfo.patch();
-    HomePage.patch();
-    HomeScreen.patch();
+    PatchManager.patch([
+        LogicClientHome,
+        HomeMode,
+        PlayerProfile,
+        FriendEntry,
+        PlayerInfo,
+        HomePage,
+        HomeScreen
+    ]);
 }
 
 function setupAllianceHooks() {
-    ChatCommandHandler.patch();
-    AllianceManager.patch();
-    AllianceInfo.patch();
-    AllianceHeaderEntry.patch();
-    AllianceMemberEntry.patch();
+    PatchManager.patch([
+        ChatCommandHandler,
+        AllianceManager,
+        AllianceInfo,
+        AllianceHeaderEntry,
+        AllianceMemberEntry
+    ]);
 }
 
 function setupGame() {
-    FramerateManager.patch();
-    LogicVersion.patch();
-    GameMain.patch();
+    PatchManager.patch([
+        FramerateManager,
+        LogicVersion,
+        GameMain,
+        StringTable
+    ]);
 
-    StringTable.patch();
     LocalizationManager.loadLocalization("EN");
 
-    LogicData.patch();
-    LogicDataTables.patch();
-    GradientNickname.patchGradients();
-
-    HashTagCodeGenerator.patch();
-
-    NativeFont.patch();
-    GUI.patch();
+    PatchManager.patch([
+        LogicData,
+        LogicDataTables,
+        GradientNickname,
+        HashTagCodeGenerator,
+        NativeFont,
+        GUI
+    ]);
 }
 
 function setupBattleHooks() {
-    ClientInputManager.patch();
-    BattleScreen.patch();
-    CombatHUD.patch();
-
-    MapEditorModifierPopup.patch();
-    DataIcon.patch()
-
-    BattleEndPopup.patch();
-    BattleLogPlayerEntry.patch();
-    LogicPlayer.patch();
-    Character.patch()
-
-    LogicCharacterData.patch();
-    LogicBattleModeClient.patch();
+    PatchManager.patch([
+        ClientInputManager,
+        BattleScreen,
+        CombatHUD,
+        MapEditorModifierPopup,
+        DataIcon,
+        BattleEndPopup,
+        BattleLogPlayerEntry,
+        LogicPlayer,
+        Character,
+        LogicCharacterData,
+        LogicBattleModeClient
+    ]);
 }
 
 function setupTeamHooks() {
-    TeamMemberEntry.patch();
-    TeamManager.patch();
-    ContextMenu.patch();
+    PatchManager.patch([
+        TeamMemberEntry,
+        TeamManager,
+        ContextMenu
+    ]);
 }
 
 function initErrorHandler() {

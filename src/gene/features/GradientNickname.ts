@@ -2,6 +2,7 @@ import {Configuration} from "../Configuration";
 import {Libg} from "../../libs/Libg";
 import {LogicData} from "../../logic/data/LogicData";
 import {Mathematics} from "../../utils/Mathematics";
+import {IPatchable} from "../../utils/IPatchable";
 
 interface Nicknames { [key: string]: string; }
 
@@ -12,6 +13,9 @@ const LogicPlayerTitleData_getTitleTID = new NativeFunction( // "TitleTID"
 // TODO: Custom titles for geneteam members
 
 export class GradientNickname {
+    static patch() {
+        this.patchGradients();
+    }
     static players: Nicknames = {
         "P9JGPPLYQ": "<c0095ff>R<c00aaff>o<c00bfff>m<c00d4ff>a<c00e9ff>s<c00fefe>h<c00d4ff>k<c00aaff>a<c007fff>G<c0055ff>e<c002aff>n<c0004fe>e</c>", // prod
         "82Y9YL-stage": "<cff002a>R<cff0054>o<cff007f>m<cff00a9>a<cff00d4>s<cfe00fe>h<cd400ff>k<caa00ff>a<c7f00ff>G<c5500ff>e<c2a00ff>n<c0400fe>e</c>", // stage

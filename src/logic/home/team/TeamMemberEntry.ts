@@ -1,6 +1,6 @@
-import {GradientNickname} from "../../../gene/features/GradientNickname";
-import {Libg} from "../../../libs/Libg";
-import {HashTagCodeGenerator} from "../../../titan/logic/util/HashTagCodeGenerator";
+import { GradientNickname } from "../../../gene/features/GradientNickname";
+import { Libg } from "../../../libs/Libg";
+import { HashTagCodeGenerator } from "../../../titan/logic/util/HashTagCodeGenerator";
 
 const TeamMemberEntry_decode = new NativeFunction(
     Libg.offset(0x972E84, 0x47FB0C), 'void', ['pointer', 'pointer'] // 24124
