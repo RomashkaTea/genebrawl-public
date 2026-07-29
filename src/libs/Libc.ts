@@ -75,7 +75,5 @@ export class Libc {
         return new NativeFunction(Module.getGlobalExportByName('access')!, 'int', ['pointer', 'int'])(dir.ptr(), 0);
     }
 
-    static memset(instance: NativePointer, offset: number, count: number) {
-        new NativeFunction(Module.getGlobalExportByName('memset')!, 'void', ['pointer', 'int', 'int']);
-    }
+    static memset = new NativeFunction(Module.getGlobalExportByName('memset')!, 'void', ['pointer', 'int', 'int']);
 }
