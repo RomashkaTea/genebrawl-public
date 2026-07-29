@@ -23,7 +23,7 @@ export class Armceptor {
     }
 
     static bytes(address: NativePointer, array: number[]): void {
-        Memory.protect(address, array.length, "rwx");
+        Memory.protect(address, array.length, "rw");
 
         address.writeByteArray(array);
 
