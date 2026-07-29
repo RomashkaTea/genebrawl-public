@@ -34,15 +34,17 @@ export class Libc {
         let lengthPtr = this.malloc(4);
         lengthPtr.writeInt(PROP_VALUE_MAX);
 
+        let resultStr = "";
+
         let result = new NativeFunction(Module.getGlobalExportByName("sysctlbyname")!, 'int', ['pointer', 'pointer', 'pointer', 'pointer', 'int'])(name.ptr(), value, lengthPtr, NULL, 0);
         if (result != -1) {
-            return value.readUtf8String()!;
+            resultStr = value.readUtf8String()!;
         }
 
         this.free(value);
         this.free(lengthPtr);
 
-        return "";
+        return resultStr;
     }
 
     static opendir(dir: string) {
