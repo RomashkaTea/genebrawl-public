@@ -1,5 +1,5 @@
-import {LogicDefines} from "../LogicDefines";
-import {Libc} from "./Libc";
+import { LogicDefines } from "../LogicDefines";
+import { Libc } from "./Libc";
 
 const gameLibraryName = LogicDefines.isPlatformIOS() ? "laser" : "libg.so";
 
@@ -21,13 +21,12 @@ export class Libg {
             this.init(gameLibraryName);
 
         let offset = LogicDefines.isPlatformAndroid() ? android_arm64 : ios;
-        if (offset == -1) {
-            return Libc.malloc(8); // ignore
+        if (offset == -1) { // ignore.
+            return NULL;
         }
 
         if (offset < 0x3) {
-            console.error(new Error(`Libg.offset - offset is NULL! Please update it. (${LogicDefines.toString()})`).stack);
-            return Libc.malloc(8);
+            throw new Error(`Libg.offset - offset is NULL! Please update it. (${LogicDefines.toString()})`);
         }
 
         return this.begin.add(offset);
