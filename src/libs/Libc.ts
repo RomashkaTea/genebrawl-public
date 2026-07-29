@@ -2,6 +2,14 @@
 const PROP_VALUE_MAX = 256;
 
 export class Libc {
+    static _open = new NativeFunction(Module.getGlobalExportByName("open")!, 'int', ['pointer', 'int', 'int']);
+    static _system_property_get = new NativeFunction(Module.getGlobalExportByName("__system_property_get")!, 'int', ['pointer', 'pointer']);
+    static _remove = new NativeFunction(Module.getGlobalExportByName('remove')!, 'int', ['pointer']);
+    static _mkdir = new NativeFunction(Module.getGlobalExportByName('mkdir')!, 'int', ['pointer', 'int']);
+    static _chmod = new NativeFunction(Module.getGlobalExportByName('chmod')!, 'int', ['pointer', 'int']);
+    static _access = new NativeFunction(Module.getGlobalExportByName('access')!, 'int', ['pointer', 'int']);
+    static _opendir = new NativeFunction(Module.getGlobalExportByName('opendir')!, 'pointer', ['pointer']);
+
     static getaddrinfo = new NativeFunction(Module.getGlobalExportByName("getaddrinfo")!, 'int', ['pointer', 'pointer', 'pointer', 'pointer']);
     static close = new NativeFunction(Module.getGlobalExportByName("close")!, 'void', ['int']);
     static free = new NativeFunction(Module.getGlobalExportByName("free")!, 'void', ['pointer']);
@@ -12,7 +20,7 @@ export class Libc {
             "r": 0
         };
 
-        return new NativeFunction(Module.getGlobalExportByName("open")!, 'int', ['pointer', 'int', 'int'])(pathname.ptr(), flags, modes[mode]!);
+        return this._open(pathname.ptr(), flags, modes[mode]!);
     }
 
     static read = new NativeFunction(Module.getGlobalExportByName("read")!, 'int', ['int', 'pointer', 'int']);
@@ -20,7 +28,7 @@ export class Libc {
     static getSystemProperty(prop: string): string {
         let value = this.malloc(PROP_VALUE_MAX);
 
-        new NativeFunction(Module.getGlobalExportByName("__system_property_get")!, 'int', ['pointer', 'pointer'])(prop.ptr(), value);
+        this._system_property_get(prop.ptr(), value);
 
         let result = value.readUtf8String();
 
@@ -48,31 +56,31 @@ export class Libc {
     }
 
     static opendir(dir: string) {
-        return new NativeFunction(Module.getGlobalExportByName('opendir')!, 'pointer', ['pointer'])(dir.ptr());
+        return this._opendir(dir.ptr());
     }
 
     static readdir = new NativeFunction(Module.getGlobalExportByName('readdir')!, 'pointer', ['pointer']);
     static closedir = new NativeFunction(Module.getGlobalExportByName('closedir')!, 'int', ['pointer']);
 
     static remove(dir: string) {
-        return new NativeFunction(Module.getGlobalExportByName('remove')!, 'int', ['pointer'])(dir.ptr());
+        return this._remove(dir.ptr());
     }
 
     static mkdir(dir: string, mode?: number) { // 0o777
         if (mode) {
-            new NativeFunction(Module.getGlobalExportByName('mkdir')!, 'void', ['pointer', 'int'])(dir.ptr(), mode);
+            this._mkdir(dir.ptr(), mode);
             return;
         }
 
-        new NativeFunction(Module.getGlobalExportByName('mkdir')!, 'void', ['pointer'])(dir.ptr());
+        this._mkdir(dir.ptr(), 0o777);
     }
 
     static chmod(dir: string, mode: number = 0o777) {
-        new NativeFunction(Module.getGlobalExportByName('chmod')!, 'void', ['pointer', 'int'])(dir.ptr(), mode);
+        this._chmod(dir.ptr(), mode);
     }
 
     static access(dir: string) {
-        return new NativeFunction(Module.getGlobalExportByName('access')!, 'int', ['pointer', 'int'])(dir.ptr(), 0);
+        return this._access(dir.ptr(), 0);
     }
 
     static memset = new NativeFunction(Module.getGlobalExportByName('memset')!, 'void', ['pointer', 'int', 'int']);
