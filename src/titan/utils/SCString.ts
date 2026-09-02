@@ -19,7 +19,7 @@ export class SCString {
         ptr.add(4).writeU32(byteLen);
 
         if (byteLen > 7) {
-            const longStringAllocPtr = Libc.malloc(byteLen);
+            const longStringAllocPtr = Libc.malloc(byteLen + 1);
             longStringAllocPtr.writeUtf8String(content);
             ptr.add(8).writePointer(longStringAllocPtr);
         } else {
