@@ -13,7 +13,7 @@ const ChatToAllianceStreamMessage_encode = new NativeFunction( // 14315 below ct
 const messageOffset = 144;
 
 export class ChatCommandHandler {
-    private static async handleMessage(message: NativePointer) {
+    private static handleMessage(message: NativePointer) {
         if (message.isNull())
             return false;
 
@@ -49,15 +49,15 @@ export class ChatCommandHandler {
     static patch(): void {
         CommandsHandler.load();
 
-        Interceptor.replace(TeamChatMessage_encode, new NativeCallback(async function (message) {
-            const shouldSendMessage = await ChatCommandHandler.handleMessage(message.add(messageOffset));
+        Interceptor.replace(TeamChatMessage_encode, new NativeCallback(function (message) {
+            const shouldSendMessage = ChatCommandHandler.handleMessage(message.add(messageOffset));
             ChatCommandHandler.antiCensorshipBypass(message.add(messageOffset));
 
             if (shouldSendMessage) TeamChatMessage_encode(message);
         }, 'void', ['pointer']));
 
-        Interceptor.replace(ChatToAllianceStreamMessage_encode, new NativeCallback(async function (message) {
-            const shouldSendMessage = await ChatCommandHandler.handleMessage(message.add(messageOffset).readPointer());
+        Interceptor.replace(ChatToAllianceStreamMessage_encode, new NativeCallback(function (message) {
+            const shouldSendMessage = ChatCommandHandler.handleMessage(message.add(messageOffset).readPointer());
             ChatCommandHandler.antiCensorshipBypass(message.add(messageOffset).readPointer());
 
             if (shouldSendMessage) ChatToAllianceStreamMessage_encode(message);
