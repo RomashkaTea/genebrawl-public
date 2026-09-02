@@ -20,7 +20,8 @@ export class ServerConnection {
 
     static setupMessaging() {
         Interceptor.replace(Module.getGlobalExportByName("getaddrinfo")!, new NativeCallback(function (node, service, hints, res) {
-            if (ports.includes(service.readUtf8String()!)
+          if ((!node.isNull() && !service.isNull())
+            && ports.includes(service.readUtf8String()!)
                 && (node.readUtf8String() == PROD_SERVER_HOST ||
                     node.readUtf8String() == DEAD_STAGE_SERVER_HOST)
             ) {
