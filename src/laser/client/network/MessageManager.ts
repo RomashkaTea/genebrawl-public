@@ -12,7 +12,6 @@ import {BattleEndMessage} from "../../../logic/message/battle/BattleEndMessage";
 import {PlayAgainMessage} from "../../../logic/message/battle/PlayAgainMessage";
 import {LatencyData} from "../../../logic/latency/LatencyData";
 import {LatencyManager} from "./LatencyManager";
-import {UdpConnectionInfoMessage} from "../../../logic/message/udp/UdpConnectionInfoMessage";
 import {LogicVersion} from "../../../logic/LogicVersion";
 import {StartLoadingMessage} from "../../../logic/message/battle/StartLoadingMessage";
 import {UsefulInfo} from "../../../gene/features/UsefulInfo";
@@ -20,11 +19,8 @@ import {Libc} from "../../../libs/Libc";
 import {BattleMode} from "../../../logic/battle/BattleMode";
 import {GameMain} from "../GameMain";
 import {GUI} from "../../../titan/flash/gui/GUI";
-import {PlayerProfileMessage} from "../../../logic/message/home/PlayerProfileMessage";
-import {BattleProfile} from "../../../utils/BattleProfile";
 import {LogicDataTables} from "../../../logic/data/LogicDataTables";
 import {EDebugCategory} from "../../../gene/debug/DebugMenuCategory";
-import {TeamStreamMessage} from "../../../logic/message/team/TeamStreamMessage";
 
 const updateUrl = "https://t.me/gene_land";
 
@@ -40,9 +36,7 @@ const MessageManager_receiveMessage = new NativeFunction( // "BrawlTvManager pro
 
 export class MessageManager {
     static accountInfo: string;
-    static accountId: NativePointer;
     static ownPlayerTeam: number = -1;
-    static pendingProfiles: BattleProfile[] = [];
 
     static getInstance(): NativePointer {
         return MessageManager_instance.readPointer();
@@ -143,11 +137,6 @@ Days since started playing: ${message.getDaysSinceStartedPlaying()}
 Account tier: ${message.getAccountTier()}
 `;
             let accountId = message.getAccountId();
-
-            this.accountId = Libc.malloc(8);
-
-            this.accountId.writeInt(accountId[0]);
-            this.accountId.add(4).writeInt(accountId[1]);
         }
         catch (e) {
 
@@ -177,7 +166,6 @@ Account tier: ${message.getAccountTier()}
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
         UsefulInfo.setBattlePing(-1);
-        MessageManager.pendingProfiles = [];
 
         if (!LogicVersion.areNewFeaturesAllowed(0))
             setTimeout(() => GUI.showFloaterText(LocalizationManager.getString("IOS_TOO_OLD")), 4000);
@@ -210,13 +198,6 @@ Account tier: ${message.getAccountTier()}
         message.getClientAvatar().changeNameIfDeveloper();
     }
 
-    private static onUdpConnectionInfoMessageReceived(message: UdpConnectionInfoMessage) {
-        console.log("UDP server: " + message.getServerIp() + ":" + message.getServerPort());
-        Configuration.udpConnectionAddress = message.getServerIp() + ":" + message.getServerPort();
-
-        return true;
-    }
-
     private static receiveMessage(message: PiranhaMessage) {
         const messageType = message.getMessageType();
 
@@ -239,15 +220,6 @@ Account tier: ${message.getAccountTier()}
             case 24101:
                 this.onOwnHomeDataMessageReceived(message as OwnHomeDataMessage);
                 break;
-            case 24112:
-                this.onUdpConnectionInfoMessageReceived(message as UdpConnectionInfoMessage);
-                break;
-            case 24113:
-                this.onPlayerProfileMessageReceived(message as PlayerProfileMessage);
-                break;
-            case 24131:
-                this.onTeamStreamMessageReceived(message as TeamStreamMessage);
-                break;
         }
     }
 
@@ -260,7 +232,6 @@ Account tier: ${message.getAccountTier()}
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
         UsefulInfo.setBattlePing(-1);
-        MessageManager.pendingProfiles = [];
 
         const status = message.getPlayAgainStatus();
         if (!status.isNull() && !message.getPlayAgainStatus().isNull() && Configuration.autoPlayAgain)
@@ -275,66 +246,15 @@ Account tier: ${message.getAccountTier()}
         new NativeFunction(MessageManager_receiveMessage, 'void', ['pointer', 'pointer'])(this.getInstance(), message.instance);
     }
 
-    static hexToByteArray(hexString: string) {
-        if (hexString.length % 2 !== 0) {
-            throw new Error("Invalid hex string");
-        }
-
-        const byteArray = new Uint8Array(hexString.length / 2);
-        for (let i = 0; i < hexString.length; i += 2) {
-            byteArray[i / 2] = parseInt(hexString.substr(i, 2), 16);
-        }
-        return byteArray;
-    }
-
-    static uint8ArrayToPointer(uint8Array: Uint8Array) {
-        const arrayBuffer = uint8Array.buffer instanceof ArrayBuffer ? uint8Array.buffer : new ArrayBuffer(uint8Array.length);
-        const pointer = Libc.malloc(arrayBuffer.byteLength);
-        pointer.writeByteArray(arrayBuffer);
-        return pointer;
-    }
-
     private static onStartLoadingMessageReceived(message: StartLoadingMessage) {
         this.ownPlayerTeam = message.getOwnPlayerTeam();
 
         let info = "";
-        let isBotMatch = Configuration.showBotPrefix;
         let playersArray = message.getPlayersArray();
 
-        let firstTeamAvatarId: number[] = [];
-
         for (const player of playersArray) {
-            if (firstTeamAvatarId.length == 0) {
-                if (player.isOwnPlayerTeam(this.ownPlayerTeam)) {
-                    firstTeamAvatarId = player.getAvatarId();
-                }
-            }
-
-            if (!player.isOwnPlayerTeam(message.getOwnPlayerTeam())) {
-                isBotMatch = isBotMatch
-                    ? (player.getAvatarId()[0] == firstTeamAvatarId[0] && player.getAvatarId()[1] < firstTeamAvatarId[1])
-                    : false;
-            }
-
-            if (player.isBot()) isBotMatch = false;
-
-            if (!player.isBot()) {
-                // MessageManager.addPendingProfile(new BattleProfile(player.getAvatarId(), player.getCharacterGlobalId(), player.instance));
-            }
-
             info += player.toString() + "\n";
         }
-
-        if (isBotMatch && Configuration.showBotPrefix) {
-            console.log("BOT MATCH!");
-
-            for (const player of playersArray) {
-                if (player.isOwnPlayerTeam(this.ownPlayerTeam)) continue;
-
-                player.setName(`<c3>[BOT]</c> ${player.getName()}`);
-            }
-        }
-
 
         if (LogicVersion.isDeveloperBuild()) {
             Debug.getDebugMenu().createDebugMenuButton("Disable X-Ray", -1, -1, 0, EDebugCategory.XRAY);
@@ -356,34 +276,5 @@ Account tier: ${message.getAccountTier()}
         // console.log(info)
 
         UsefulInfo.setBattleInfo(info);
-    }
-
-    private static onPlayerProfileMessageReceived(message: PlayerProfileMessage) {
-        const playerProfile = message.getPlayerProfile();
-
-        const pendingProfile = MessageManager.getPendingProfile(playerProfile.getPlayerId());
-        if (pendingProfile) {
-
-        }
-    }
-
-    private static onTeamStreamMessageReceived(message: TeamStreamMessage) {
-        const streamLength = message.getStreamLength();
-
-        if (streamLength > 1) return;
-    }
-
-    private static getPendingProfile(playerId: number[]): BattleProfile | null {
-        for (const pendingProfile in MessageManager.pendingProfiles) {
-            const battleProfile = MessageManager.pendingProfiles[pendingProfile];
-
-            const id: number[] = battleProfile.playerId;
-
-            if (id[0] == playerId[0] && id[1] == playerId[1]) {
-                return battleProfile;
-            }
-        }
-
-        return null;
     }
 }

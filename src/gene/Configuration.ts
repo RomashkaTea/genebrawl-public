@@ -3,8 +3,7 @@ import {Constants} from "./Constants";
 import {NCoder} from "./networking/NetworkManager";
 
 const DO_NOT_SAVE_KEYS = [
-    "isChinaVersion",
-    "braille", "braille_textfield"
+    "isChinaVersion"
 ];
 
 export class Configuration {
@@ -12,28 +11,21 @@ export class Configuration {
     static useProxy: boolean;
     static useStage: boolean;
 
-    static key: string;
-    static validKey: string = Constants.UNAVAILABLE_KEY_STRING;
-    static nonce: string;
-
     static showSidemask: boolean = true;
     static emoteAnimation: boolean = true;
     static drawOutline: boolean = true;
     static showDebugItems: boolean = true;
-    static showLobbyInfo: boolean = true;
     static contentCreatorBoost: boolean = true;
     static specialOffers: boolean = true;
     static heroSounds: boolean = true;
     static showUlti: boolean = true;
     static showName: boolean = true;
     static showTags: boolean = true;
-    static showBotPrefix: boolean = false;
 
     static fakePremiumPass: boolean;
     static showFutureEvents: boolean;
     static slowMode: boolean;
     static staticBackground: boolean;
-    static showConnectionIndicator: boolean;
     static darkTheme: boolean;
     static isChinaVersion: boolean;
     static antiOutOfSync: boolean;
@@ -42,12 +34,6 @@ export class Configuration {
     static autoExitAfterBattle: boolean;
     static skipReplayIntro: boolean;
     static antiAFK: boolean;
-    static moveToTarget: boolean;
-    static autoAim: boolean;
-    static holdToShoot: boolean;
-    static autoUlti: boolean;
-    static autoOvercharge: boolean;
-    static autoDodge: boolean;
     static movementBasedAutoshoot: boolean;
     static skipBattleEndReplay: boolean;
     static moveToAlly: boolean;
@@ -58,24 +44,15 @@ export class Configuration {
     static useOldIntro: boolean = false;
     static hideLeagueBattleCard: boolean = false;
     static showEnemyAmmo: boolean = false;
-    static skipRandomAnimation: boolean = false;
     static battleCammeraMode: number = 0;
     static autoReady: boolean;
     static alpha: number = 100;
     static opacity: number = 100;
-    static stopLolaClone: boolean = false;
-    static lolaControlState: number = 0; // 0 - both, 1 - only lola, 2 - only clone
-    static kitMoveHack: boolean = false;
     static antiProfanity: boolean = false;
     static showEditControls: boolean = false;
     static showBattleShortcuts: boolean = false;
-    static antiknockback: boolean = false;
     static showTicks: boolean = false;
-    static enableProtective: boolean = false;
 
-    //
-    static udpConnectionAddress: string;
-    static showSVOButton: boolean = false;
 
     static preferredStatus: number = -1;
     static lastChangelogVersionSeen: number = -1;
@@ -88,20 +65,12 @@ export class Configuration {
     static showBattlePing: boolean;
     static showTeam: boolean;
     static showBattleInfo: boolean;
-    static showChatButton: boolean;
 
     // Battle servers
     static regionId: number = -1;
 
     // Visual name
     static accountNames: { [key: string]: string; } = {};
-
-    // Braille
-    /**
-     * самая лучшая фича, после добавления которой продажи вырастут на 1200%
-     */
-    static braille: boolean;
-    static braille_textfield: boolean;
 
     static markFakeNinja: boolean;
     static cameraRotateY: number = 4000.0;
@@ -110,11 +79,6 @@ export class Configuration {
     static cameraAlign: number = 0.0;
     static cameraRotateX: number = 0.0;
     static cameraDistance: number = 0.0;
-    static cameraZ: number = 0.0;
-
-    static currentUserThemeSet: string = "";
-
-    static snowTheme: boolean;
 
     static load() {
         let path = Path.getDataPath() + "settings.json";
@@ -130,9 +94,7 @@ export class Configuration {
             console.log(e);
         }
 
-        Configuration.braille = false;
         Configuration.isChinaVersion = false;
-        Configuration.braille_textfield = false;
 
         console.log("Configuration.load:", `Loaded ${Object.keys(this).length} values!`);
     }

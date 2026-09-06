@@ -1,4 +1,4 @@
-import {ByteStream} from "../../titan/datastream/ByteStream";
+
 
 const encodeVtableOffset = 2 * Process.pointerSize;
 const decodeVtableOffset = 3 * Process.pointerSize;
@@ -30,10 +30,6 @@ export class PiranhaMessage {
 
     getMessageType(): number {
         return PiranhaMessage.getMessageType(this.instance);
-    }
-
-    getByteStream(): ByteStream {
-        return new ByteStream(this.instance.add(byteStreamOffset));
     }
 
     getMessageVersion(): number {

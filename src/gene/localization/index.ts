@@ -44,7 +44,7 @@ export class LocalizationManager {
 
     /**
      * LocalizationManager.getStateString("EXAMPLE", true) // EXAMPLE_ON -> Example is ON!
-     * 
+     *
      * я просто эту хуйню решил попроще сделать, так сказать чтобы повсюду не сувать тернарки, а просто вот так вызывать и заебись чо
      */
     static getStateString(str: string, state: boolean) {
@@ -167,7 +167,6 @@ export class LocalizationManager {
             MARK_FAKE_LEON: "Помечать клона Леона",
             HIDE_ULTI_AIMING: "Скрыть прицеливание супером",
             STATIC_BACKGROUND: "Статичный фон меню",
-            STOP_LOLA_CLONE: "Сменить управление Лолой",
             AUTO_AIM: "Автоматическая атака",
             DISABLE_SPOOF: "Отключить смену сервера",
             DEBUG_INFO: "Debug Info",
@@ -237,9 +236,6 @@ export class LocalizationManager {
 
             HIDE_ULTI_AIMING_ON: "Теперь никто не увидит, что вы прицеливаетесь ультой!",
             HIDE_ULTI_AIMING_OFF: "Теперь все увидят, что вы прицеливаетесь ультой!",
-
-            STOP_LOLA_CLONE_ON: "Теперь клон Лолы не будет двигаться.",
-            STOP_LOLA_CLONE_OFF: "Теперь клон Лолы будет двигаться вместе с Вами.",
 
             KIT_MOVE_HACK_ON: "Теперь Кит может передвигаться, сидя на другом бравлере.",
             KIT_MOVE_HACK_OFF: "Теперь Кит НЕ может передвигаться, сидя на другом бравлере.",
@@ -610,7 +606,6 @@ export class LocalizationManager {
             BATTLE_SETTINGS: "Camera settings",
             SHOW_CHAT_BUTTON: "Show chat button",
             SHOW_ENEMY_AMMO: "Show enemy ammo",
-            STOP_LOLA_CLONE: "Change Lola Control",
             KIT_MOVE_HACK: "Kit move when attached",
             ADD_BRAWL_PASS_POINTS_THIS_SEASON: "Add Brawl Pass points this season",
             ADD_CHAMPIONSHIP_CHALLENGE_WIN: "Add Championship Challenge Win",
@@ -680,9 +675,6 @@ export class LocalizationManager {
 
             HIDE_ULTI_AIMING_ON: "Others will now won't see when you aim ulti!",
             HIDE_ULTI_AIMING_OFF: "Others will now see when you aim ulti!",
-
-            STOP_LOLA_CLONE_ON: "Lola's clone won't move now.",
-            STOP_LOLA_CLONE_OFF: "Lola's clone will move now.",
 
 
             EDIT_CONTROLS_ON: "Edit controls button now <c41fc03>will</c> be shown in battle.",

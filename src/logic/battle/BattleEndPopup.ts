@@ -53,16 +53,5 @@ export class BattleEndPopup {
                 }
             }
         });
-
-        return;
-        if (LogicDefines.isPlatformIOS()) {
-            Interceptor.replace(BattleEndPopup_kudosPatch1, new NativeCallback(function (a1, a2) {
-                return 0;
-            }, 'int', ['pointer', 'int']));
-
-            Interceptor.replace(BattleEndPopup_kudosPatch2, new NativeCallback(function (a1, a2, a3) {
-                return 0;
-            }, 'bool', ['pointer', 'int', 'int']));
-        }
     }
 }

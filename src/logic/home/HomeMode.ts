@@ -41,7 +41,13 @@ export class HomeMode {
     }
 
     static addCommand(command: LogicCommand | NativePointer) {
-        return HomeMode_addCommand(this.getInstance(), command instanceof LogicCommand ? command.instance : command);
+        let instance = this.getInstance();
+        if (!instance || instance.isNull()) {
+            console.error("HomeMode::addCommand", "called when not in home");
+            return;
+        }
+
+        return HomeMode_addCommand(instance, command instanceof LogicCommand ? command.instance : command);
     }
 
     static getInstance(): NativePointer {

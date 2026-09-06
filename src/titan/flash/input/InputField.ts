@@ -3,11 +3,6 @@ import {TextField} from "../TextField";
 import {TextInput} from "./TextInput";
 
 // InputField_ctor: txt_input_field_playerid
-
-const InputField_getInputText = new NativeFunction( // "Got teamCode:", then 1st function in if statement (a3 == 1)
-    Libg.offset(0x0, 0x9DBE98), 'pointer', ['pointer']
-);
-
 const InputField_inputTextOffset = 32;
 const InputField_updateVtableOffset = 11 * Process.pointerSize;
 

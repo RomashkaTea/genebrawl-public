@@ -1,5 +1,4 @@
 export * from "./frida";
-export * from "./lobbyinfo";
 export * from "./test";
 export * from "./zov";
 export * from "./debug";

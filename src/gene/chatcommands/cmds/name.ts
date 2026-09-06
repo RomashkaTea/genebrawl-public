@@ -44,7 +44,7 @@ export class ChangeNameCommand extends MainCommand {
 
     getCommandInformation() {
         return {
-            name: "nane",
+            name: "name",
             desc: "locally change someone's name",
             isHidden: false
         };

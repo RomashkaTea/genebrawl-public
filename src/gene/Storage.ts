@@ -1,11 +1,9 @@
 import {GlobalID} from "../logic/data/GlobalID";
 import {PopupBase} from "../titan/flash/gui/PopupBase";
-import {DVD} from "./features/DVD";
 
 export class Storage {
     static popups: PopupBase[] = [];
     static serverThemeId: number = GlobalID.createGlobalID(41, 0);
-    static dvd: DVD[] = [];
 
     static freePopups() {
         Storage.popups = [];

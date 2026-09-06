@@ -9,10 +9,6 @@ export class Response {
         this.body = body;
     }
 
-    getJson() {
-        return JSON.parse(this.bodyToString());
-    }
-
     getStatusCode() {
         const parsedCode = this.statusCode.split(" ")[1];
 
@@ -21,26 +17,5 @@ export class Response {
 
     getBody() {
         return this.body;
-    }
-
-    getHeaders() {
-        return this.headers;
-    }
-
-    bodyToString() {
-        return this.bytesToString(this.body);
-    }
-
-    headersToString() {
-        return Object.keys(this.headers).map(e => `${e}: ${this.headers[e]}`).join("\n");
-    }
-
-    private bytesToString(arr: any) {
-        let str = '';
-        arr = new Uint8Array(arr);
-        for (const i in arr) {
-            str += String.fromCharCode(arr[i]);
-        }
-        return str;
     }
 }

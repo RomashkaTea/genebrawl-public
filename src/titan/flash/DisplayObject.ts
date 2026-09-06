@@ -1,5 +1,4 @@
 import {Libg} from "../../libs/Libg";
-import {Rect} from "./Rect";
 
 export interface DisplayObject {
     instance: NativePointer
@@ -33,10 +32,6 @@ const DisplayObject_setWidth = new NativeFunction(
 
 const DisplayObject_setHeight = new NativeFunction(
     Libg.offset(0xA4995C, 0x9A6D54), 'void', [ 'pointer', 'float' ]
-)
-
-const DisplayObject_getBounds = new NativeFunction(
-    Libg.offset(0xA49430, 0x9A6828), 'void', [ 'pointer', 'pointer', 'pointer', 'int' ]
 )
 
 export class DisplayObject {
@@ -114,10 +109,6 @@ export class DisplayObject {
 
     set alpha(value: number) {
         DisplayObject.setAlpha(this.instance, value);
-    }
-
-    getBounds(object: DisplayObject, rect: Rect) {
-        DisplayObject_getBounds(this.instance, object.instance, rect.instance, 0)
     }
 
     static setAddColor(self: NativePointer, r: number, g: number, b: number) {

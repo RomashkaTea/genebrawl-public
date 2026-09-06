@@ -20,7 +20,6 @@ const PlayerInfo_refreshPlayerHeader = new NativeFunction( // "tag_txt"
 );
 
 const guiContainerOffset = 192;
-const playerDataOffset = 480;
 const logicLongOffset = 440;
 
 export class PlayerInfo {

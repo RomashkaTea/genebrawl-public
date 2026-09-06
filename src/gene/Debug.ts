@@ -5,29 +5,16 @@ import {DebugMenu} from "./debug/DebugMenu";
 import {DisplayObject} from "../titan/flash/DisplayObject";
 import {DebugHud} from "./debug/DebugHud";
 import {UsefulInfo} from "./features/UsefulInfo";
-import {LogicVersion} from "../logic/LogicVersion";
-import {Hamster} from "./features/Hamster";
 import {LatencyManager} from "../laser/client/network/LatencyManager";
 import {Configuration} from "./Configuration";
-import {GUI} from "../titan/flash/gui/GUI";
-import {SoundManager} from "../titan/sound/SoundManager";
-import {LogicDataTables} from "../logic/data/LogicDataTables";
-import {Application} from "../titan/utils/Application";
 import {LocalizationManager} from "./localization/index";
 import {Resources} from "./Resources";
 import {GameStateManager} from "../laser/client/state/GameStateManager";
 import {LobbyInfo} from "./features/LobbyInfo";
-import {HamsterScreen} from "./popups/HamsterScreen";
-import {SVOButton} from "./debug/SVOButton";
 import {Storage} from "./Storage";
-import {Constants} from "./Constants";
-import {OpenChatButton} from "./debug/OpenChatButton";
 import {BattleSettingsPopup} from "./popups/BattleSettingsPopup";
-import {SpeechCharacter} from "./popups/SpeechCharacter";
-import {HomeScreen} from "../logic/home/HomeScreen";
 import {BattleDebug} from "./BattleDebug";
 import {MessageManager} from "../laser/client/network/MessageManager";
-import {UserImagesScreen} from "./popups/UserImagesScreen";
 import {Filesystem} from "./features/filesystem";
 import {Path} from "../titan/Path";
 
@@ -35,19 +22,13 @@ export class Debug {
     private static debugMenu?: DebugMenu;
     private static debugButton?: DebugButton;
     private static battleDebug?: BattleDebug;
-    private static SVOButton?: SVOButton;
-    private static openChatButton?: OpenChatButton;
     private static debugInfo?: DebugInfo;
     private static debugHud?: DebugHud;
     private static lobbyInfo?: LobbyInfo;
-    private static hamsterScreen?: HamsterScreen;
-    private static userImagesScreen?: UserImagesScreen;
-    private static hamster?: Hamster;
     private static battleSettingsPopup?: BattleSettingsPopup;
     private static latencyTestsAdded: boolean;
     private static resourcesLoaded: boolean;
 
-    private static enforceOpenNewHamsterMenu: boolean = true;
     static isGeneAssetsPreloaded: boolean = false;
 
     private static displayObjectQueue: DisplayObject[] = [];
@@ -124,26 +105,6 @@ export class Debug {
 
         this.lobbyInfo?.update();
         this.battleSettingsPopup?.update(deltaTime);
-
-        Storage.dvd.filter(e => e.createdOnStage).forEach(e => e.update());
-
-        // TODO: don't forget to remove strip block when it's complete.
-        /// #if DEBUG
-        this.hamsterScreen?.update(deltaTime);
-
-        if (this.hamster) {
-            this.hamster.encountEnergyRestorationAmount();
-        }
-
-        // 11/30/2025 10:59 PM:
-        // why is this part of the code under the DEBUG strip block?
-        // wasn't this already a feature?
-        if (this.openChatButton) {
-            this.openChatButton.visibility = Configuration.showChatButton;
-        }
-
-        this.userImagesScreen?.update(deltaTime);
-        /// #endif
     }
 
     static hideDebugItems() {
@@ -169,10 +130,6 @@ export class Debug {
         return Debug.debugInfo;
     }
 
-    static createSpeechCharacter(text: string): SpeechCharacter {
-        return new SpeechCharacter(text);
-    }
-
     static create() {
         try {
             this.destruct(); // To make sure old debug menu doesn't exist
@@ -182,13 +139,9 @@ export class Debug {
             this.spawnLobbyInfo();
             this.spawnDebugButton();
             this.spawnDebugBattle();
-            //this.spawnSVOButton();
-            this.spawnOpenChatButton();
             this.spawnDebugMenu();
             this.spawnDebugHud();
             this.spawnBattleSettings();
-
-            //this.storeReloadData();
 
             console.log("Debug::create", "success!");
         } catch (e: any) {
@@ -207,18 +160,6 @@ export class Debug {
         this.displayObjectQueue.push(this.debugButton);
 
         console.log("Debug.spawnDebugButton:", "spawned debug button at " + this.debugButton.x + "," + this.debugButton.y);
-    }
-
-    private static spawnSVOButton() {
-        this.SVOButton = new SVOButton();
-
-        this.displayObjectQueue.push(this.SVOButton);
-    }
-
-    private static spawnOpenChatButton() {
-        this.openChatButton = new OpenChatButton();
-
-        this.displayObjectQueue.push(this.openChatButton);
     }
 
     private static spawnDebugMenu() {
@@ -240,19 +181,6 @@ export class Debug {
         this.displayObjectQueue.push(this.battleSettingsPopup);
     }
 
-    private static spawnUserImagesScreen() {
-        this.userImagesScreen = new UserImagesScreen();
-    }
-
-    private static storeReloadData() {
-        /// #if DEBUG
-        if (LogicVersion.isDeveloperBuild()) {
-
-            this.debugHud!.addMessage("Gene Brawl DEV Build");
-        }
-        /// #endif
-    }
-
     private static spawnLobbyInfo() {
         this.lobbyInfo = new LobbyInfo();
         this.lobbyInfo.showInfo(true);
@@ -266,62 +194,6 @@ export class Debug {
         }
 
         this.debugMenu?.toggle();
-        console.log(this.debugMenu);
-        if (this.hamster?.visibility) {
-            this.hamster?.toggle();
-        }
-
-        if (this.battleSettingsPopup?.visibility) {
-            this.battleSettingsPopup?.toggle();
-        }
-    }
-
-    static setupSpeechCharacter() {
-        const speechCharacter = this.createSpeechCharacter(LocalizationManager.getString("NEED_TO_ACTIVATE").replace("$KEY", Configuration.validKey));
-        //if (shouldHide) speechCharacter?.hideAfter(3)
-        GameMain.getHomeSprite().addChild(speechCharacter);
-
-        return speechCharacter;
-    }
-
-    static toggleUserImagesButtonPressed() {
-        this.userImagesScreen = new UserImagesScreen();
-
-        this.userImagesScreen.setXy();
-
-        GUI.showPopup(this.userImagesScreen.instance, 0, 0, 0);
-    }
-
-    static toggleDebugClickerButtonPressed() {
-        if (!LogicVersion.isDeveloperBuild()) {
-            const music = LogicDataTables.getMusicByName("Godzilla_Ingame"); // fuck this shit ass
-            SoundManager.playMusic(music);
-            return;
-        }
-
-        /// #if DEBUG
-        if (this.enforceOpenNewHamsterMenu) {
-            this.hamsterScreen = new HamsterScreen();
-
-            this.hamsterScreen.setXy();
-
-            GUI.showPopup(this.hamsterScreen.instance, 0, 0, 0);
-
-            Debug.toggleDebugButtonPressed();
-            return;
-        }
-
-        if (this.hamster) {
-            this.hamster.toggle();
-        }
-
-        if (!this.hamster) {
-            this.hamster = new Hamster();
-
-            GameMain.getGameSprite().addChild(this.hamster);
-
-        }
-        /// #endif
     }
 
     static toggleSetAlphaButtonClicked() {
@@ -342,28 +214,12 @@ export class Debug {
         return this.battleDebug!;
     }
 
-    static getSVOButton(): SVOButton {
-        return this.SVOButton!;
-    }
-
-    static getOpenChatButton(): OpenChatButton {
-        return this.openChatButton!;
-    }
-
     static getDebugMenu(): DebugMenu {
         return this.debugMenu!;
     }
 
-    static getHamster(): Hamster {
-        return this.hamster!;
-    }
-
     static getDebugHud(): DebugHud {
         return this.debugHud!;
-    }
-
-    static getHamsterScreen(): HamsterScreen {
-        return this.hamsterScreen!;
     }
 
     static getLobbyInfo(): LobbyInfo {
@@ -372,10 +228,6 @@ export class Debug {
 
     static getAlphaPopup(): BattleSettingsPopup {
         return this.battleSettingsPopup!;
-    }
-
-    static getUserImagesScreen(): UserImagesScreen {
-        return this.userImagesScreen!;
     }
 
     static destruct() {

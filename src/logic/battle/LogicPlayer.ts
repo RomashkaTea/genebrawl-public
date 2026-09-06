@@ -5,7 +5,6 @@ import {LogicHeroConfiguration} from "./LogicHeroConfiguration";
 import {LogicPlayerTitleData} from "../data/LogicPlayerTitleData";
 import {LogicDataTables} from "../data/LogicDataTables";
 import {GlobalID} from "../data/GlobalID";
-import {LogicCharacterData} from "../data/LogicCharacterData";
 
 const LogicPlayer_decode = new NativeFunction( // 20559 decode
     Libg.offset(0x9EAB50, 0x4CA608), 'void', ['pointer', 'pointer']
@@ -14,17 +13,11 @@ const LogicPlayer_decode = new NativeFunction( // 20559 decode
 export const battleCard_titleOffset = 40;
 export const battleCard = 440;
 
-const LogicPlayer_PlayerDisplayDataOffset = 448;
-const logicAccessoryOffset = 280;
 const playerIndexOffset = 8;
 const teamIndexOffset = 12;
 const characterGlobalIdOffset = 16;
 const heroesOffset = 48;
 const heroesCountOffset = 60;
-
-const ultiCountOffset = 84;
-const maxUltiCountOffset = 88;
-const overChargeCountOffset = 100;
 
 export class LogicPlayer {
     instance: NativePointer;
@@ -33,28 +26,12 @@ export class LogicPlayer {
         this.instance = instance;
     }
 
-    getAvatarId() {
-        return this.instance.accountId();
-    }
-
     getName(): string {
         return this.getPlayerDisplayData().fromsc();
     }
 
     getTeamIndex(): number {
         return this.instance.add(teamIndexOffset).readInt();
-    }
-
-    hasUlti() {
-        return this.instance.add(ultiCountOffset).readInt() === this.instance.add(maxUltiCountOffset).readInt();
-    }
-
-    isBot() {
-        return LogicPlayer.isBot(this.instance);
-    }
-
-    isOwnPlayerTeam(team: number): boolean {
-        return this.getTeamIndex() == team;
     }
 
     getHero(index: number) {
@@ -77,28 +54,8 @@ export class LogicPlayer {
         return LogicPlayer.getPlayerDisplayData(this.instance);
     }
 
-    getCharacterData(index: number) {
-        return new LogicCharacterData(this.getHero(index).readPointer());
-    }
-
     getPlayerIndex(): number {
         return LogicPlayer.getPlayerIndex(this.instance);
-    }
-
-    getCharacterGlobalId(): number {
-        return LogicPlayer.getCharacterGlobalId(this.instance);
-    }
-
-    getTitle() {
-        return LogicPlayer.getTitle(this.instance);
-    }
-
-    setTitle(dataRef: NativePointer) {
-        LogicPlayer.setTitle(this.instance, dataRef);
-    }
-
-    setName(name: string) {
-        this.getPlayerDisplayData().scptr(name);
     }
 
     toString(): string {
@@ -148,20 +105,8 @@ export class LogicPlayer {
         LogicPlayer_decode(logicPlayer, ByteStream);
     }
 
-    static getAvatarId(logicPlayer: NativePointer) {
-        return logicPlayer.accountId();
-    }
-
     static getName(logicPlayer: NativePointer): string {
         return LogicPlayer.getPlayerDisplayData(logicPlayer).fromsc();
-    }
-
-    static hasUlti(logicPlayer: NativePointer): boolean {
-        return logicPlayer.add(ultiCountOffset).readInt() == logicPlayer.add(maxUltiCountOffset).readInt();
-    }
-
-    static hasOvercharge(logicPlayer: NativePointer): boolean {
-        return logicPlayer.add(overChargeCountOffset).readInt() == logicPlayer.add(maxUltiCountOffset).readInt();
     }
 
     static isBot(logicPlayer: NativePointer) {
@@ -184,16 +129,8 @@ export class LogicPlayer {
         return logicPlayer.add(heroesCountOffset).readInt();
     }
 
-    static getHero(logicPlayer: NativePointer, index: number) {
-        return LogicPlayer.getHeroes(logicPlayer).add(Process.pointerSize * index).readPointer();
-    }
-
     static getPlayerDisplayData(logicPlayer: NativePointer): NativePointer {
         return logicPlayer.add(battleCard).readPointer().readPointer();
-    }
-
-    static getTitle(logicPlayer: NativePointer): NativePointer {
-        return logicPlayer.add(battleCard).readPointer().add(battleCard_titleOffset).readPointer();
     }
 
     static setTitle(logicPlayer: NativePointer, title: NativePointer) {
@@ -215,13 +152,5 @@ export class LogicPlayer {
 
     static getPlayerIndex(playerPtr: NativePointer) {
         return playerPtr.add(playerIndexOffset).readInt();
-    }
-
-    getAccessory() {
-        return this.instance.add(logicAccessoryOffset).readPointer();
-    }
-
-    static getAccessory(playerPtr: NativePointer) {
-        return playerPtr.add(logicAccessoryOffset).readPointer();
     }
 }

@@ -7,7 +7,6 @@ import { AllianceManager } from "./logic/alliance/AllianceManager";
 import { PackageInfo } from "./utils/PackageInfo";
 import { Debug } from "./gene/Debug";
 import { GameMain } from "./laser/client/GameMain";
-import { HomePage } from "./logic/home/HomePage";
 import { FramerateManager } from "./titan/client/FramerateManager";
 import { ChatCommandHandler } from "./gene/features/ChatCommandHandler";
 import { BattleScreen } from "./logic/battle/BattleScreen";
@@ -49,8 +48,8 @@ import { GeneAssets } from "./gene/GeneAssets";
 import { GUI } from "./titan/flash/gui/GUI";
 import { DataIcon } from "./titan/flash/DataIcon";
 import { GradientNickname } from "./gene/features/GradientNickname";
-import { LogicBattleModeClient } from "./logic/battle/LogicBattleModeClient";
 import { PatchManager } from "./utils/IPatchable";
+import { PopupBase } from "./titan/flash/gui/PopupBase";
 
 // global stuff
 declare global {
@@ -150,7 +149,7 @@ function setupHomeHooks() {
         PlayerProfile,
         FriendEntry,
         PlayerInfo,
-        HomePage,
+        PopupBase,
         HomeScreen
     ]);
 }
@@ -196,8 +195,7 @@ function setupBattleHooks() {
         BattleLogPlayerEntry,
         LogicPlayer,
         Character,
-        LogicCharacterData,
-        LogicBattleModeClient
+        LogicCharacterData
     ]);
 }
 

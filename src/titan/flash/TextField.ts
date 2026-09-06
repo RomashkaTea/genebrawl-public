@@ -1,5 +1,4 @@
-import {Configuration} from "../../gene/Configuration";
-import {Braille} from "../../gene/features/Braille";
+
 import {RGBA} from "../../gene/features/RGBA";
 import {Libg} from "../../libs/Libg";
 import {DisplayObject} from "./DisplayObject";
@@ -12,7 +11,7 @@ const TextField_setText = new NativeFunction( // under "TID_GATCHA_SCREEN_TICKET
     Libg.offset(0xA7D540, 0x9D7FE0), 'void', ['pointer', 'pointer']
 );
 
-const TextField_getTextHeight = new NativeFunction( // "TextBoxBase: Unable to find TextField with instance name %s", before what the fuck if checks 
+const TextField_getTextHeight = new NativeFunction( // "TextBoxBase: Unable to find TextField with instance name %s", before what the fuck if checks
     Libg.offset(0xA7D7C8, 0x9D8254), 'float', ['pointer']
 );
 
@@ -39,20 +38,5 @@ export class TextField extends DisplayObject {
 
     getTextHeight() {
         return TextField_getTextHeight(this.instance);
-    }
-
-    static patch(): void {
-        Interceptor.revert(TextField_setText);
-
-        if (Configuration.braille_textfield) {
-            Interceptor.replace(TextField_setText, new NativeCallback(function (a1, a2) {
-                if (Configuration.braille_textfield)
-                    a2 = Braille.to(a2.fromsc()).scptr();
-
-                TextField_setText(a1, a2);
-            }, 'void', ['pointer', 'pointer']));
-
-            console.log("Enabled cane!");
-        }
     }
 }

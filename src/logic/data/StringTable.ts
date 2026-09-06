@@ -1,6 +1,5 @@
 import {LogicDefines} from "../../LogicDefines";
 import {Configuration} from "../../gene/Configuration";
-import {Braille} from "../../gene/features/Braille";
 import {GradientNickname} from "../../gene/features/GradientNickname";
 import {Libg} from "../../libs/Libg";
 import {LogicVersion} from "../LogicVersion";
@@ -41,12 +40,7 @@ export class StringTable {
                         return "ТЯНКИ".scptr();
                     }
                 default:
-                    let result: string = StringTable_getString(tid).fromsc();
-
-                    if (Configuration.braille)
-                        result = Braille.to(result);
-
-                    return result.scptr();
+                    return StringTable_getString(tid);
             }
         }, 'pointer', ['pointer']));
     }

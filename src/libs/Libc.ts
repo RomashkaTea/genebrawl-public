@@ -50,7 +50,7 @@ export class Libc {
         }
 
         let value = this.malloc(PROP_VALUE_MAX);
-        let lengthPtr = this.malloc(4);
+        let lengthPtr = this.malloc(8); // 8 - size_t
         lengthPtr.writeInt(PROP_VALUE_MAX);
 
         let resultStr = "";

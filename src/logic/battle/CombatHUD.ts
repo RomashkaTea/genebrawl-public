@@ -3,19 +3,13 @@ import {Configuration} from "../../gene/Configuration";
 import {LogicVersion} from "../LogicVersion";
 import {UsefulInfo} from "../../gene/features/UsefulInfo";
 import {ClientInputManager} from "./ClientInputManager";
-import {BattleMode, BattleMode_isInTrainingCave} from "./BattleMode";
+import {BattleMode} from "./BattleMode";
 import {MovieClip} from "../../titan/flash/MovieClip";
 import {StringTable} from "../data/StringTable";
-import {TeamStream} from "../home/team/TeamStream";
 import {DisplayObject} from "../../titan/flash/DisplayObject";
 import {Constants} from "../../gene/Constants";
-import {LogicDefines} from "../../LogicDefines";
 import {LogicBattleModeClient} from "./LogicBattleModeClient";
 import {Debug} from "../../gene/Debug";
-
-const CombatHUD_ultiButtonActivated = new NativeFunction( // check last method of handleAutoshoot
-    Libg.offset(0x4ABEF4, 0x9D1C0), 'void', ['pointer', 'bool']
-);
 
 const CombatHUD_prepareNewIntro = new NativeFunction( // "three_versus_boss"
     Libg.offset(0x47EC94, 0x76D6C), 'void', ['pointer']
@@ -51,8 +45,6 @@ export class CombatHUD {
     static patch() {
         Interceptor.replace(CombatHUD_update, new NativeCallback(function (combatHud, time) {
             CombatHUD_update(combatHud, time);
-
-            TeamStream.update(time);
 
             const battleDebug = Debug.getBattleDebug();
             if (battleDebug)
@@ -105,36 +97,25 @@ export class CombatHUD {
 
             if (LogicBattleModeClient.isUnderdog(logicBattleModeClient)) {
                 const underdog: MovieClip = new MovieClip(combatHUD.add(CombatHUD_movieClip).readPointer()).getChildByName("underdog");
-                if (underdog) {
+                if (underdog && !underdog.instance.isNull()) {
                     underdog.visibility = true;
                     underdog.getTextFieldByName("label_txt")!.setText(StringTable.getString("TID_UNDERDOG"));
                 }
             }
         }, 'void', ['pointer']));
-
-        if (LogicDefines.isPlatformIOS()) {
-            Interceptor.replace(BattleMode_isInTrainingCave, new NativeCallback(function (battleMode) {
-                if (Configuration.showEditControls)
-                    return 1;
-
-                return BattleMode_isInTrainingCave(battleMode);
-            }, 'bool', ['pointer']));
-        }
     }
 
     static setAlphaOnHudObject(object: NativePointer, alpha: number) {
-        try {
-            console.log(alpha);
-            DisplayObject.setAlpha(object, alpha);
-        } catch (e) { }
-    }
+        if (object.isNull()) {
+            console.error("CombatHUD::setAlphaOnHudObject", "object is NULL");
+            return;
+        }
 
-    static ultiButtonActivated(combatHUD: NativePointer, a2: boolean) {
-        CombatHUD_ultiButtonActivated(combatHUD, Number(a2));
+        console.log("CombatHUD::setAlphaOnHudObject", "alpha ", alpha);
+        DisplayObject.setAlpha(object, alpha)
     }
 
     static mirrorPlayfield() {
         return CombatHUD_mirrorPlayfieldOffset.readU8();
     }
 }
-

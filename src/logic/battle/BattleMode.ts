@@ -1,23 +1,11 @@
 import {GameStateManager} from "../../laser/client/state/GameStateManager";
-import {LogicBattleModeClient_gameModeVariationOffset} from "./LogicBattleModeClient";
 import {LogicPlayer} from "./LogicPlayer";
 import {LocalizationManager} from "../../gene/localization/index";
-import {GUI} from "../../titan/flash/gui/GUI";
-import {LogicVersion} from "../LogicVersion";
-import {Libg} from "../../libs/Libg";
+import { GUI } from "../../titan/flash/gui/GUI";
 
 const logicOffset = 40;
 const screenOffset = 8;
 const clientInputManagerOffset = 88;
-const LogicBattleModeClient_playersCountOffset = 232;
-
-export const BattleMode_isInTrainingCave = new NativeFunction(
-    Libg.offset(-1, 0x895FC), 'bool', ['pointer'] // check upper than "edit_controls_ui"
-);
-
-const BattleMode_getIntroTicks = new NativeFunction(
-    Libg.offset(0x9D650C, 0x4C224C), 'int', ['int'] // "pressReplayControlZap() -> from tick %d to %d" (v13 = sub_100XXXXXX(*(v12 + 292)) also it has ::clamp inlined below)
-);                                                  // это че за заклинание для входа в хогвартс
 
 export class BattleMode {
     static xrayTargetPlayerIndex: number = -1;
@@ -61,9 +49,5 @@ export class BattleMode {
         GUI.showFloaterText(
             LocalizationManager.getString("XRAY_TARGET_SELECTED").replace("%TARGET", LogicPlayer.getName(playerPtr))
         );
-    }
-
-    static getIntroTicks(): number {
-        return BattleMode_getIntroTicks(this.getLogic().add(LogicBattleModeClient_gameModeVariationOffset).readInt());
     }
 }

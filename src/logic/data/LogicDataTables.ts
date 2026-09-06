@@ -16,20 +16,12 @@ const LogicDataTables_getTable = new NativeFunction( // "TID_SHOP_GEM_PACKS"
     Libg.offset(0x8A5E60, 0x3E6060), 'pointer', ['int']
 );
 
-const LogicDataTables_getMusicByName = new NativeFunction( // "Win_loop", then in check with 2 args (2nd one is 0)
-    Libg.offset(0x8A6108, 0x3E62A0), 'pointer', ['pointer', 'pointer']
-);
-
 const LogicDataTables_getThemeByName = new NativeFunction( // "Default"
     Libg.offset(0x8AE51C, 0x3EC13C), 'pointer', ['pointer', 'pointer']
 );
 
 const LogicDataTables_getDataById = new NativeFunction( // seasonend_brawler before brawler_txt
     Libg.offset(0x8A5F2C, 0x3E6120), 'pointer', ['int']
-);
-
-const LogicDataTables_createItem = new NativeFunction( // Invalid data table id: 
-    Libg.offset(0x0, 0x3E36E4), 'pointer', ['pointer', 'pointer']
 );
 
 const LogicDataTables_getMenuMusic = new NativeFunction( // "MenuMusic"
@@ -49,10 +41,6 @@ export class LogicDataTables {
 
     static getMenuMusic(): NativePointer {
         return LogicDataTables_getMenuMusic();
-    }
-
-    static getMusicByName(musicName: string) {
-        return LogicDataTables_getMusicByName(musicName.scptr(), NULL);
     }
 
     static getThemeByName(themeName: string): LogicThemeData {
@@ -127,8 +115,5 @@ export class LogicDataTables {
 
             return LogicDataTables_getLocationThemeByName(namePtr, data);
         }, 'pointer', ['pointer', 'pointer']));
-
-        LogicThemeData.patch();
-        //
     }
 }

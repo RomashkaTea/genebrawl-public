@@ -108,20 +108,6 @@ export class GameMain {
         this.instance.add(shouldReloadGameOffset).writeU8(1);
     }
 
-    static getAccountTag(): string | null {
-        return HashTagCodeGenerator.toCode(
-            this.instance.add(accountIdOffset).readPointer()
-        );
-    }
-
-    static getAccountId(): number[] {
-        return this.getAccountIdPtr().accountId();
-    }
-
-    static getAccountIdPtr(): NativePointer {
-        return this.instance.add(accountIdOffset).readPointer();
-    }
-
     static getGameSprite(): Sprite {
         return new Sprite(
             this.instance.add(spriteOffset).readPointer()

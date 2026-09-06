@@ -9,15 +9,12 @@ import {LogicDataTables} from "../data/LogicDataTables";
 import {Configuration} from "../../gene/Configuration";
 import {GlobalID} from "../data/GlobalID";
 import {Stage} from "../../titan/flash/Stage";
-import {LogicVersion} from "../LogicVersion";
 import {MessageManager} from "../../laser/client/network/MessageManager";
 import {TeamSetMemberReadyMessage} from "../message/team/TeamSetMemberReadyMessage";
 import {Debug} from "../../gene/Debug";
-import {SpeechCharacter} from "../../gene/popups/SpeechCharacter";
 import {ContextMenu} from "../../titan/flash/gui/ContextMenu";
 import {Libc} from "../../libs/Libc";
 import {DownloadedImage} from "../../titan/flash/DownloadedImage";
-import {UserImagesManager} from "../../gene/features/UserImagesManager";
 import {EDebugCategory} from "../../gene/debug/DebugMenuCategory";
 import {UsefulInfo} from "../../gene/features/UsefulInfo";
 
@@ -45,8 +42,6 @@ const HomeScreen_enter = new NativeFunction(
 const HomeScreen_init = Libg.offset(0x6E28CC, 0x277BE0);
 
 export class HomeScreen {
-    static speechCharacter?: SpeechCharacter;
-
     static getInstance() {
         return HomeMode.getHomeScreen();
     }
@@ -59,10 +54,6 @@ export class HomeScreen {
         this.getInstance().add(themeMovieClipOffset).writePointer(movieClip.instance);
     }
 
-    static setThemeImage(image: DownloadedImage) {
-        this.getInstance().add(themeMovieClipOffset).writePointer(image.instance);
-    }
-
     static getThemeMovieClip(): MovieClip {
         return new MovieClip(
             this.getInstance().add(themeMovieClipOffset).readPointer()
@@ -70,7 +61,7 @@ export class HomeScreen {
     }
 
     static terminateRankedMatch() {
-        HomeScreen_onRankedMatchTerminatedMessage(this.getInstance(), Libc.malloc(200));
+        HomeScreen_onRankedMatchTerminatedMessage(this.getInstance(), Memory.alloc(200));
     }
 
     static getThemeData(): LogicThemeData {
@@ -92,28 +83,6 @@ export class HomeScreen {
         //this.getThemeMovieClip().setXY(Stage.getX() + 75, theme.getY());
 
         homeSprite.addChildAt(instance.add(themeMovieClipOffset).readPointer(), 0);
-    }
-
-    static replaceThemeByImage(image: DownloadedImage) {
-        const themeMovieClip = HomeScreen.getThemeMovieClip();
-
-        const childAmounts = themeMovieClip.getChildAmount();
-
-        for (let i = 0; i < childAmounts; i++) {
-            const child = themeMovieClip.getChildById(i);
-
-            child.visibility = false;
-        }
-
-        themeMovieClip.addChild(image);
-
-        const stageX = Stage.getX();
-        const stageY = Stage.getY();
-
-        image.setScale(1); // because these motherfuckers set scale to big number (in test case, 343). ебанутые совсем?  
-
-        image.setWidth(stageX * 2.2);
-        image.setHeight(stageY * 2);
     }
 
     static replaceTheme(themeData: LogicThemeData, musicData: LogicThemeData, isForce: boolean = false) {
@@ -148,31 +117,10 @@ export class HomeScreen {
                 music = LogicDataTables.getMenuMusic();
             }
 
-            try {
+            if (!music.isNull()) {
                 SoundManager.playMusic(music);
-            } catch { }
+            }
         }
-    }
-
-    static setTheme(image: DownloadedImage) {
-        let instance = this.getInstance();
-        let homeSprite = GameMain.getHomeSprite();
-
-        const oldTheme = this.getThemeMovieClip();
-
-        const x = oldTheme.x;
-        const y = oldTheme.y;
-        const scale = oldTheme.getScale();
-
-        image.setXY(x, y);
-
-        homeSprite.removeChild(instance.add(themeMovieClipOffset).readPointer());
-
-        this.setThemeImage(image);
-        //this.calculateThemeScale();
-
-        homeSprite.addChildAt(instance.add(themeMovieClipOffset).readPointer(), 0);
-
     }
 
     static setLegacyTheme(themeMovieClip: MovieClip, state: boolean = true) {
@@ -188,14 +136,14 @@ export class HomeScreen {
                 }
 
                 const subChild = child.getChildById(0);
-
-                try {
+                if (subChild && !subChild.instance.isNull()) {
                     const nameOfChild = child.getNameOfChild(subChild);
                     if (nameOfChild !== "icon_skull") {
                         child.visibility = !state;
                     }
-                } catch {
-                    child.visibility = !state;
+                }
+                else {
+                    child.visibility !== state;
                 }
             }
         } catch (e) {
@@ -208,40 +156,14 @@ export class HomeScreen {
     }
 
     static patch() {
-        /*Interceptor.attach(HomeScreen_enter, {
-            onEnter(args) {
-                if (Configuration.autoReady)
-                    MessageManager.sendMessage(new TeamSetMemberReadyMessage(true));
-
-                Debug.getOpenChatButton().visibility = false;
-                ContextMenu.shouldShowContextMenu = true
-
-                //setTimeout(APIManager.requestVouchers, 1500); // TODO: fix crash here
-            },
-            onLeave() {
-                console.log("HomeScreen::enter called! configuration theme id: ", Configuration.themeId);
-
-                if (Configuration.themeId !== -1) {
-                    const themeData = LogicDataTables.getDataById(41, GlobalID.getInstanceID(Configuration.themeId)) as LogicThemeData;
-    
-                    HomeScreen.replaceTheme(themeData);
-                }
-
-                HomeScreen.disableTheme(Configuration.darkTheme);
-            }
-        })*/
-
         Interceptor.attach(HomeScreen_init, {
             onEnter(args) {
                 if (Configuration.autoReady)
                     MessageManager.sendMessage(new TeamSetMemberReadyMessage(true));
 
-                Debug.getOpenChatButton().visibility = false;
                 ContextMenu.shouldShowContextMenu = true;
 
                 UsefulInfo.ticks = 0;
-
-                //setTimeout(APIManager.requestVouchers, 1500); // TODO: fix crash here
             },
             onLeave() {
                 console.log("HomeScreen::enter called! configuration theme id:", Configuration.themeId);
@@ -274,17 +196,6 @@ export class HomeScreen {
                 });
 
                 HomeScreen.disableTheme(Configuration.darkTheme);
-
-                if (Configuration.currentUserThemeSet !== "") {
-                    const image = UserImagesManager.getDownloadedImage(Configuration.currentUserThemeSet);
-
-                    if (image) {
-                        HomeScreen.replaceThemeByImage(image);
-                    } else {
-                        Configuration.currentUserThemeSet = "";
-                        Configuration.save();
-                    }
-                }
             }
         });
     }

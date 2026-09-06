@@ -82,12 +82,4 @@ export class TeamManager {
     static openTeamChat() {
         TeamManager_openTeamChat(); // maybe rewrite function, so we can close chat on battleend?
     }
-
-    static isCurrentlyInTeam() {
-        return !TeamManager.getInstance().readPointer().isNull();
-    }
-
-    static shouldShowOpenChatButton() {
-        return Configuration.showChatButton && TeamManager.isCurrentlyInTeam();
-    }
 }

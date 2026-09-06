@@ -6,12 +6,13 @@ const LogicDebugCommand_LogicDebugCommand = new NativeFunction( // "LogicDebugCo
     Libg.offset(0x84FEA8, 0x3A4A18), 'void', ['pointer']
 );
 
+const allocSize = 120;
 const actionIdxOffset = 28;
 const intParameterOffset = 32;
 
 export class LogicDebugCommand extends LogicCommand {
     constructor(actionIdx: number, intParameter: number) {
-        let instance = Libc.malloc(100);
+        let instance = Libc.malloc(allocSize);
         LogicDebugCommand_LogicDebugCommand(instance);
 
         super(instance);

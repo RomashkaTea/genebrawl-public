@@ -4,18 +4,10 @@ import {ClientInputManager} from "./ClientInputManager";
 import {ClientInput, ClientInputType} from "./ClientInput";
 import {BattleMode} from "./BattleMode";
 import {LogicBattleModeClient} from "./LogicBattleModeClient";
-import {LogicDefines} from "../../LogicDefines";
 import {CombatHUD, CombatHUD_shouldHaveSpectateFollowButton} from "./CombatHUD";
 import {LogicGameObjectClient} from "./objects/LogicGameObjectClient";
 import {Sprite} from "../../titan/flash/Sprite";
-import {TeamManager} from "../home/team/TeamManager";
-import {Debug} from "../../gene/Debug";
-import {TeamChatMessage} from "../message/team/TeamChatMessage";
-import {MessageManager} from "../../laser/client/network/MessageManager";
-import {TeamStream} from "../home/team/TeamStream";
-import {HomeScreen} from "../home/HomeScreen";
-import {GameMain} from "../../laser/client/GameMain";
-import {ContextMenu} from "../../titan/flash/gui/ContextMenu";
+import { Debug } from "../../gene/Debug";
 
 const BattleScreen_instance = Libg.offset(0x103E2F8, 0xEE64D0); // "pressReplayControlZap"
 
@@ -31,42 +23,11 @@ const BattleScreen_isAFK = new NativeFunction(
     Libg.offset(0x6D4C7C, 0x26C098), 'bool', ['pointer']
 );
 
-const BattleScreen_updateSkill = new NativeFunction( // "EnragerStarPowerDamage"
-    Libg.offset(0x6CFD7C, 0x267990), 'void', ['pointer', 'pointer', 'float', 'pointer', 'bool']
-);
-
-const BattleScreen_updateCameraPosition = new NativeFunction( // return func in BattleScreen::update ("teleport_trail")
-    Libg.offset(-1, -1), 'void', ['pointer']
-);
-
 const BattleScreen_cameraFunc = new NativePointer(
     Libg.offset(0x0, 0x260198)
 );
 
-const BattleScreen_sendGoHomeMessage = new NativeFunction( // "battle_won" | cupper than "TID_AFK_WARNING" in CombatHUD::update
-    Libg.offset(0x6D2D84, 0x26A768), 'void', ['pointer', 'bool', 'bool', 'bool', 'bool']
-);
-
-const BattleScreen_handleAutoshoot = new NativeFunction( // xref to function that has "TID_CAN_NOT_AUTOSHOOT" string
-    Libg.offset(0x0, 0x262190), 'void', ['pointer', 'pointer']
-);
-
-const LogicCharacterClientOwn_isAttached = new NativeFunction(
-    Libg.offset(-1, -1), 'bool', ['pointer']
-);
-
-const BattleScreen_shouldShowMoveStick = new NativeFunction(
-    Libg.offset(-1, -1), 'bool', ['pointer']
-);
-
-const BattleScreen_shouldShowChatButton = new NativeFunction(
-    Libg.offset(-1, 0x26BDE0), 'bool', ['pointer']
-);
-
 const afkWarningOffset = 2984;
-const targetGlobalIdOffset = 3452;
-const targetXOffset = 3604;
-const targetYOffset = 3608;
 const shootStickActiveOffset = 3553;
 const combatHudOffset = 2232;
 const sideMaskSidesOffsets = [256, 264, 272, 280];
@@ -83,14 +44,6 @@ export class BattleScreen {
         return battleScreen.add(combatHudOffset).readPointer();
     }
 
-    static handleAutoshoot(battleScreen: NativePointer, gameObject: NativePointer) {
-        BattleScreen_handleAutoshoot(battleScreen, gameObject);
-    }
-
-    static sendGoHomeMessage(a1: number, a2: number, a3: number) {
-        BattleScreen_sendGoHomeMessage(this.getInstance(), a1, a2, a3, 0);
-    }
-
     static patch(): void {
         const self = this;
 
@@ -99,11 +52,6 @@ export class BattleScreen {
                 this.battleScreen = args[0];
             },
             onLeave(retval) {
-                if (HomeScreen.speechCharacter) {
-                    GameMain.getHomeSprite().removeChild(HomeScreen.speechCharacter);
-                    HomeScreen.speechCharacter = undefined;
-                }
-
                 if (Configuration.skipReplayIntro && CombatHUD_shouldHaveSpectateFollowButton()) {
                     const clientInput = new ClientInput(ClientInputType.Movement);
                     clientInput.setXY(180, 0);
@@ -123,22 +71,6 @@ export class BattleScreen {
                             Sprite.removeChild(combatHUD, sidePtr);
                             combatHUD.add(sideOffset).writePointer(NULL);
                         }
-                    }
-                }
-
-                if (Configuration.showChatButton && TeamManager.isCurrentlyInTeam()) {
-                    if (TeamStream.getLastItem().isNull()) {
-                        const message = new TeamChatMessage();
-
-                        message.setMessage("Battle began!");
-
-                        MessageManager.sendMessage(message);
-                    }
-
-                    if (TeamManager.shouldShowOpenChatButton()) {
-                        Debug.getOpenChatButton().visibility = true;
-
-                        ContextMenu.shouldShowContextMenu = false;
                     }
                 }
             }
@@ -205,23 +137,6 @@ export class BattleScreen {
             }
         });
 
-        if (LogicDefines.isPlatformIOS()) {
-            Interceptor.replace(BattleScreen_shouldShowChatButton, new NativeCallback(function (battleScreen) {
-                return 1;
-            }, 'bool', ['pointer']));
-        }
-
-        // Kit Hack was fixed
-        /*Interceptor.replace(LogicCharacterClientOwn_isAttached, new NativeCallback(function (charClientOwn) {
-            return Configuration.kitMoveHack ? 0 : LogicCharacterClientOwn_isAttached(charClientOwn);
-        }, 'bool', ['pointer']));
-        Interceptor.replace(BattleScreen_shouldShowMoveStick, new NativeCallback(function (battleScreen) {
-            if (Configuration.kitMoveHack)
-                battleScreen.add(3152).writeU8(0)
-
-            return BattleScreen_shouldShowMoveStick(battleScreen);
-        }, 'bool', ['pointer']));*/
-
         Interceptor.replace(BattleScreen_isAFK, new NativeCallback(function (battleScreen) {
             const isAfk = BattleScreen_isAFK(battleScreen);
 
@@ -242,27 +157,6 @@ export class BattleScreen {
 
             return isAfk;
         }, 'bool', ['pointer']));
-
-        Interceptor.replace(BattleScreen_updateSkill, new NativeCallback(function (battleScreen, gameObject, a3, a4, a5) {
-            BattleScreen_updateSkill(battleScreen, gameObject, a3, a4, a5);
-
-            BattleScreen.tickXray(battleScreen);
-
-            const enabledFunctions = [
-                Configuration.autoAim,
-                Configuration.holdToShoot,
-                Configuration.moveToTarget,
-                Configuration.moveToAlly,
-                Configuration.autoUlti,
-                Configuration.autoOvercharge
-            ];
-
-            if (!enabledFunctions.includes(true)) {
-                return;
-            }
-
-            // I think you can implement whatever you need here by yourself :)
-        }, 'void', ['pointer', 'pointer', 'float', 'pointer', 'bool']));
     }
 
     static tickXray(battleScreen: NativePointer) {
@@ -277,4 +171,3 @@ export class BattleScreen {
         return Boolean(battleScreen.add(shootStickActiveOffset).readU8());
     }
 }
-

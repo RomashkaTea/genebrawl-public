@@ -7,9 +7,6 @@ export class Constants {
 
     static ANTIPROFANITY_BYTES = "\uFE00";
 
-    static IMAGE_FORMAT_REGEX: RegExp = /\.(png|jp[e]?g)$/i;
-    static USER_IMAGES_DIR = "image/user_images/";
-
     static COMBATHUD_ALPHA_OFFSETS: number[] = [
         888 // virtuastick_move_bg
         //896, // virtuastick_move_stick

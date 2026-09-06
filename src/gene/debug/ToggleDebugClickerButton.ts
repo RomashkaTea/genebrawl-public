@@ -11,7 +11,5 @@ export class ToggleDebugClickerButton extends GameButton {
 
     callback() {
         console.log("ToggleDebugClickerButton::callback");
-
-        Debug.toggleDebugClickerButtonPressed();
     }
 }

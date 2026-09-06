@@ -6,9 +6,11 @@ export class PackageInfo {
     static getPackageName(): string | null {
         let fd = Libc.open("/proc/self/cmdline", 0, "r");
         if (fd != -1) {
-            let buffer = Libc.malloc(256);
+            let buffer = Memory.alloc(256);
+
             Libc.read(fd, buffer, 256);
             Libc.close(fd);
+
             return buffer.readUtf8String();
         }
 

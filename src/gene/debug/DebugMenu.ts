@@ -26,15 +26,9 @@ import {Resources} from "../Resources";
 import {GameStateManager} from "../../laser/client/state/GameStateManager";
 import {RGBA} from "../features/RGBA";
 import {OpenUrlPopup} from "../popups/OpenUrlPopup";
-import {TextField} from "../../titan/flash/TextField";
-import {Settings} from "../../laser/client/Settings";
-import {Braille} from "../features/Braille";
 import {HomeScreen} from "../../logic/home/HomeScreen";
 import {LogicDefines} from "../../LogicDefines";
 import {StringTable} from "../../logic/data/StringTable";
-import {StartSpectateMessage} from "../../logic/message/battle/StartSpectateMessage";
-import {LogicRevealMutationCommand} from "../../logic/command/LogicRevealMutationCommand";
-import {HomeMode} from "../../logic/home/HomeMode";
 import {GlobalID} from "../../logic/data/GlobalID";
 import {Storage} from "../Storage";
 import {LogicData} from "../../logic/data/LogicData";
@@ -42,24 +36,17 @@ import {ToggleDebugMenuButton} from "./ToggleDebugMenuButton";
 import {ProfileByTagPopup} from "../popups/ProfileByTagPopup";
 import {NativeDialog} from "../../titan/utils/NativeDialog";
 import {UsefulInfo} from "../features/UsefulInfo";
-import {DVD} from "../features/DVD";
-import {PlayAgainMessage} from "../../logic/message/battle/PlayAgainMessage";
-import {TestCase} from "../TestCase";
 import {IButtonListener} from "../../titan/flash/gui/IButtonListener";
 import {GeneAssets} from "../GeneAssets";
-import {ClientInfoMessage} from "../../logic/message/udp/ClientInfoMessage";
 import {NativeHTTPClient} from "../../titan/utils/NativeHTTPClient";
 import {Path} from "../../titan/Path";
 import {DebugDangerousFunctionPopup} from "./DebugDangerousFunctionPopup";
-import {TeamManager} from "../../logic/home/team/TeamManager";
 
 export class DebugMenu extends DebugMenuBase {
     private readonly toggleDebugMenuButton: ToggleDebugMenuButton;
     private clicker?: ToggleDebugClickerButton;
 
-    private brailleTimeout: NodeJS.Timeout = setTimeout(() => { }, 1);
     private darkThemeTimeout: NodeJS.Timeout = setTimeout(() => { }, 1);
-    private isBrailleSwitchBegan: boolean = false;
     private isDarkThemeSwitchBegan: boolean = false;
 
     private static notImplementedFunctions: string[] = [
@@ -141,18 +128,11 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("REMOVE_WINSTREAK", 211, -1, 2, EDebugCategory.ACCOUNT);
         this.createDebugMenuButton("ADD_1000_BLINGS", 182, 1000, 2, EDebugCategory.ACCOUNT);
 
-        // not needed yet. this.createDebugMenuButton("Reveal Angel Mutation", -1, -1, 0, EDebugCategory.ACCOUNT);
-        // not needed yet. this.createDebugMenuButton("Reveal Demon Mutation", -1, -1, 0, EDebugCategory.ACCOUNT);
         this.createDebugMenuButton("HIDE_SIDE_MASK", -1, -1, 0, EDebugCategory.GFX, Configuration.showSidemask ? 0 : 1);
         this.createDebugMenuButton("DARK_THEME", -1, -1, 0, EDebugCategory.GFX, Configuration.darkTheme ? 1 : 0);
         this.createDebugMenuButton("SHOW_EDIT_CONTROLS", -1, -1, 0, EDebugCategory.GFX, Configuration.showEditControls ? 1 : 0);
         this.createDebugMenuButton("SHOW_BATTLE_SHORTCUTS", -1, -1, 0, EDebugCategory.GFX, Configuration.showBattleShortcuts ? 1 : 0);
         //this.createDebugMenuButton("Win match", 35, -1, 0, EDebugCategory.BATTLE);
-        this.createDebugMenuButton("AUTO_AIM", -1, -1, 0, EDebugCategory.BATTLE, Configuration.autoAim ? 1 : 0);
-        this.createDebugMenuButton("AUTO_ULTI", -1, -1, 0, EDebugCategory.BATTLE, Configuration.autoUlti ? 1 : 0);
-        this.createDebugMenuButton("AUTO_HYPERCHARGE", -1, -1, 0, EDebugCategory.BATTLE, Configuration.autoOvercharge ? 1 : 0);
-        this.createDebugMenuButton("HOLD_TO_SHOOT", -1, -1, 0, EDebugCategory.BATTLE, Configuration.holdToShoot ? 1 : 0);
-        this.createDebugMenuButton("AUTO_MOVE_TO_TARGET", -1, -1, 0, EDebugCategory.BATTLE, Configuration.moveToTarget ? 1 : 0);
         this.createDebugMenuButton("FOLLOW_CLOSEST_TEAMMATE", -1, -1, 0, EDebugCategory.BATTLE, Configuration.moveToAlly ? 1 : 0);
         this.createDebugMenuButton("AUTO_PLAY_AGAIN", -1, -1, 0, EDebugCategory.BATTLE, Configuration.autoPlayAgain ? 1 : 0);
         this.createDebugMenuButton("SEND_EMPTY_EMOTE", -1, -1, 1, EDebugCategory.BATTLE);
@@ -160,10 +140,8 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("SKIP_BATTLE_END_REPLAY", -1, -1, 1, EDebugCategory.BATTLE, Configuration.skipBattleEndReplay ? 1 : 0);
         this.createDebugMenuButton("AUTO_READY", -1, -1, 1, EDebugCategory.BATTLE, Configuration.autoReady ? 1 : 0);
         this.createDebugMenuButton("BATTLE_SETTINGS", -1, -1, 0, EDebugCategory.BATTLE);
-        this.createDebugMenuButton("SHOW_CHAT_BUTTON", -1, -1, 0, EDebugCategory.BATTLE, Configuration.showChatButton ? 1 : 0);
 
         this.createDebugMenuButton("SHOW_ENEMY_AMMO", -1, -1, 1, EDebugCategory.BATTLE, Configuration.showEnemyAmmo);
-        this.createDebugMenuButton("STOP_LOLA_CLONE", -1, -1, 1, EDebugCategory.BATTLE, Configuration.lolaControlState !== 0);
 
         this.createDebugMenuButton("ADD_BRAWL_PASS_POINTS_THIS_SEASON", 81, 50, 2, EDebugCategory.BRAWL_PASS);
         this.createDebugMenuButton("ADD_CHAMPIONSHIP_CHALLENGE_WIN", 84, 1, 2, EDebugCategory.CHALLENGE);
@@ -174,16 +152,8 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("FORCE_CHINA_GFX_TWEAKS", -1, -1, 0, EDebugCategory.PRC_CHINA, Configuration.isChinaVersion ? 1 : 0);
 
         this.createDebugMenuButton("HIDE_DEBUG_ITEMS", -1, -1, 0, EDebugCategory.GFX, Configuration.showDebugItems ? 0 : 1);
-        //fixme looks like it got removed too this.createDebugMenuButton("HIDE_SHOW_CONNECTION_INDICATOR", -1, -1, 0, EDebugCategory.GFX, Configuration.showConnectionIndicator ? 1 : 0);
         this.createDebugMenuButton("HIDE_TAGS", -1, -1, 0, EDebugCategory.STREAMER_MODE, Configuration.showTags ? 0 : 1);
         this.createDebugMenuButton("HIDE_NAME", -1, -1, 2, EDebugCategory.STREAMER_MODE, Configuration.showName ? 0 : 1);
-
-        //this.createDebugMenuButton("HIDE_SHOW_FPS", -1, -1, 2, EDebugCategory.USEFUL_INFO);
-        //this.createDebugMenuButton("HIDE_SHOW_AVG_FPS", -1, -1, 2, EDebugCategory.USEFUL_INFO);
-        //this.createDebugMenuButton("HIDE_SHOW_MIN_FPS", -1, -1, 2, "FPS Counter");
-        //this.createDebugMenuButton("HIDE_SHOW_MAX_FPS", -1, -1, 2, EDebugCategory.USEFUL_INFO);
-        //this.createDebugMenuButton("HIDE_SHOW_TIME", -1, -1, 2, EDebugCategory.USEFUL_INFO);
-        //this.createDebugMenuButton("HIDE_SHOW_SESSION_TIME", -1, -1, 2, EDebugCategory.USEFUL_INFO);
 
         this.createDebugMenuButton("START_ROOM_SPAM", -1, -1, 2, EDebugCategory.SPAM, -1, () => {
             TeamSpam.start();
@@ -209,8 +179,6 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("STATIC_BACKGROUND", -1, -1, 2, EDebugCategory.GFX, Configuration.staticBackground ? 1 : 0);
         this.createDebugMenuButton("ANTI_AFK", -1, -1, 0, EDebugCategory.BATTLE, Configuration.antiAFK ? 1 : 0);
 
-
-
         // Optimization
         this.createDebugMenuButton("HIDE_SPECIAL_OFFERS", -1, -1, 0, EDebugCategory.OPTIMIZATION, Configuration.specialOffers ? 0 : 1);
         this.createDebugMenuButton("CHARACTER_SOUNDS", -1, -1, 0, EDebugCategory.OPTIMIZATION, Configuration.heroSounds ? 1 : 0);
@@ -232,7 +200,6 @@ export class DebugMenu extends DebugMenuBase {
         this.createDebugMenuButton("EMOTE_ANIMATION", -1, -1, 0, EDebugCategory.GFX, Configuration.emoteAnimation ? 1 : 0);
         this.createDebugMenuButton("SHOW_FUTURE_EVENTS", -1, -1, 0, EDebugCategory.GFX, Configuration.showFutureEvents ? 1 : 0);
         this.createDebugMenuButton("HIDE_CREATOR_BOOST", -1, -1, 0, EDebugCategory.GFX, Configuration.contentCreatorBoost ? 0 : 1);
-        this.createDebugMenuButton("SHOW_BOT_PREFIX", -1, -1, 0, EDebugCategory.GFX, Configuration.showBotPrefix ? 1 : 0);
         this.createDebugMenuButton("USE_LEGACY_BACKGROUND", -1, -1, 0, EDebugCategory.GFX, Configuration.useLegacyThemeMode);
         // FIXME this.createDebugMenuButton("SKIP_STARR_DROP_ANIMATION", -1, -1, 0, EDebugCategory.GFX, Configuration.skipRandomAnimation);
         this.createDebugMenuButton("HIDE_LOBBY_INFO", -1, -1, 0, EDebugCategory.GFX, 0);
@@ -261,12 +228,6 @@ export class DebugMenu extends DebugMenuBase {
 
         this.createDebugMenuButton("NO_PROXY", -1, -1, 0, EDebugCategory.PROXY);
         this.createDebugMenuButton("Gene Proxy", -1, -1, 0, EDebugCategory.PROXY);
-
-        this.createDebugMenuButton("PROBING_CANE_MODE", -1, -1, 0, EDebugCategory.FUN, Configuration.braille ? 1 : 0);
-        this.createDebugMenuButton("ADVANCED_PROBING_CANE_MODE", -1, -1, 0, EDebugCategory.FUN, Configuration.braille_textfield ? 1 : 0);
-        this.createDebugMenuButton("SPAWN_DVD", -1, -1, 0, EDebugCategory.FUN);
-        this.createDebugMenuButton("REMOVE_DVD", -1, -1, 0, EDebugCategory.FUN);
-        this.createDebugMenuButton("REMOVE_ALL_DVD", -1, -1, 0, EDebugCategory.FUN);
 
         this.createDebugMenuButton("CURRENT_SERVER_THEME", -1, -1, 0, EDebugCategory.CHANGE_THEME, Configuration.themeId == -1);
 
@@ -302,26 +263,9 @@ export class DebugMenu extends DebugMenuBase {
             });
 
             this.createDebugMenuButton(`Spawn Test Popup`, -1, -1, -1, EDebugCategory.TESTS);
-            this.createDebugMenuButton("Send StartSpectate myself", -1, -1, 0, EDebugCategory.BATTLE);
-            this.createDebugMenuButton("DVD Test", -1, -1, 0, EDebugCategory.TESTS);
-
-            if (GeneAssets.getAsset("CUSTOM_BG"))
-                this.createDebugMenuButton(`Change background`, -1, -1, -1, EDebugCategory.TESTS, -1, () => {
-                    HomeScreen.setTheme(GeneAssets.getAsset("CUSTOM_BG"));
-                });
         }
 
         if (LogicVersion.isDeveloperBuild()) {
-            this.createDebugMenuButton("Hamster", -1, -1, 0, EDebugCategory.TESTS, -1, () => {
-                Debug.toggleDebugClickerButtonPressed();
-            });
-
-            this.createDebugMenuButton("Test Case", -1, -1, 0, EDebugCategory.TESTS, -1, () => {
-                console.log("Init test case!");
-                TestCase.doCase();
-                console.log("Test case done!");
-            });
-
             this.createDebugMenuButton("Test callback button", -1, -1, 0, EDebugCategory.TESTS, 0, (button: NativePointer, listener: NativePointer) => {
                 console.log("Test callback button pressed!");
 
@@ -421,16 +365,6 @@ export class DebugMenu extends DebugMenuBase {
                     LocalizationManager.getStateString("OUT_OF_SYNC", Configuration.antiOutOfSync)
                 );
                 break;
-            case "Reveal Demon Mutation":
-                const _command = new LogicRevealMutationCommand(0);
-
-                HomeMode.addCommand(_command);
-                break;
-            case "Reveal Angel Mutation":
-                const command = new LogicRevealMutationCommand(1);
-
-                HomeMode.addCommand(command);
-                break;
         }
     }
 
@@ -456,15 +390,6 @@ export class DebugMenu extends DebugMenuBase {
                 GUI.showFloaterText(LocalizationManager.getString(
                     Configuration.hideBattleState ? "BATTLE_STATE_HIDDEN" : "BATTLE_STATE_VISIBLE"
                 ));
-                break;
-            case "PROTECTIVE_FEATURES":
-                button.switchCheckbox(Configuration.enableProtective);
-                Configuration.enableProtective = !Configuration.enableProtective;
-                Configuration.save();
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("PROTECTIVE_FEATURES", Configuration.enableProtective)
-                );
                 break;
             case "AUTO_READY":
                 button.switchCheckbox(Configuration.autoReady);
@@ -516,12 +441,6 @@ export class DebugMenu extends DebugMenuBase {
                 Configuration.movementBasedAutoshoot = !Configuration.movementBasedAutoshoot;
                 Configuration.save();
                 break;
-            case "Send StartSpectate myself":
-                let message = new StartSpectateMessage(MessageManager.accountId, false);
-
-                MessageManager.sendMessage(message);
-                //  MessageManager.sendMessage(new StopSpectateMessage());
-                break;
             case "MARK_FAKE_LEON":
                 button.switchCheckbox(Configuration.markFakeNinja);
                 GUI.showFloaterText(LocalizationManager.getStateString("MARK_FAKE_NINJA", !Configuration.markFakeNinja));
@@ -537,21 +456,6 @@ export class DebugMenu extends DebugMenuBase {
 
                 Configuration.showEnemyAmmo = !Configuration.showEnemyAmmo;
                 Configuration.save();
-                break;
-
-            case "SHOW_CHAT_BUTTON":
-                button.switchCheckbox(Configuration.showChatButton);
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("CHAT_BUTTON", !Configuration.showChatButton)
-                );
-
-                Configuration.showChatButton = !Configuration.showChatButton;
-                Configuration.save();
-
-                if (!BattleMode.getInstance().isNull() && TeamManager.shouldShowOpenChatButton()) {
-                    Debug.getOpenChatButton().visibility = Configuration.showChatButton;
-                }
                 break;
             default:
                 console.warn("DebugMenu.battleButtonPressed:", "no case for", text);
@@ -626,69 +530,6 @@ export class DebugMenu extends DebugMenuBase {
         Configuration.save();
     }
 
-    private funButtonPressed(button: GameButton) {
-        let text = button.getOriginalName();
-
-        switch (text) {
-            case "PROBING_CANE_MODE":
-                button.switchCheckbox(Configuration.braille);
-                Configuration.braille = !Configuration.braille;
-
-                if (this.isBrailleSwitchBegan) {
-                    this.isBrailleSwitchBegan = false;
-                    clearTimeout(this.brailleTimeout);
-
-                    GUI.showFloaterText(
-                        LocalizationManager.getString("BRAILLE_INTERRUPTED")
-                    );
-                    break;
-                }
-
-                GUI.showFloaterText(LocalizationManager.getStateString("BRAILLE", Configuration.braille));
-
-                this.isBrailleSwitchBegan = true;
-                this.brailleTimeout = setTimeout(() => {
-                    if (Configuration.braille) {
-                        const currentLanguage = StringTable.getCurrentLanguageCode();
-
-                        if (!Braille.isLanguageSupported(currentLanguage)) {
-                            Settings.setSelectedLanguage("EN");
-                        }
-                    }
-
-                    Debug.destruct();
-                    GameMain.reloadGame();
-                    Configuration.save();
-                }, 4000);
-                break;
-            case "ADVANCED_PROBING_CANE_MODE":
-                button.switchCheckbox(Configuration.braille_textfield);
-                Configuration.braille_textfield = !Configuration.braille_textfield;
-                TextField.patch();
-                break;
-
-            case "SPAWN_DVD":
-                const dvd = new DVD();
-                dvd.createOnStage();
-                Storage.dvd.push(dvd);
-                break;
-
-            case "REMOVE_DVD":
-                if (Storage.dvd.length === 0) return;
-                const _dvd = Storage.dvd[Storage.dvd.length - 1];
-                _dvd.destruct();
-                Storage.dvd = Storage.dvd.filter(e => !e.instance.equals(_dvd.instance));
-                break;
-
-            case "REMOVE_ALL_DVD":
-                for (const dvd of Storage.dvd) {
-                    dvd.destruct();
-                    Storage.dvd = Storage.dvd.filter(e => !e.instance.equals(dvd.instance));
-                }
-                break;
-        }
-    }
-
     private gfxButtonPressed(button: GameButton) {
         let text = button.getOriginalName();
         let gameButton = button;
@@ -717,16 +558,6 @@ export class DebugMenu extends DebugMenuBase {
                     GameMain.reloadGame();
                     Configuration.save();
                 }, 4000);
-                break;
-            case "SHOW_BOT_PREFIX":
-                button.switchCheckbox(Configuration.showBotPrefix);
-
-                Configuration.showBotPrefix = !Configuration.showBotPrefix;
-                Configuration.save();
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("BOT_PREFIX", Configuration.showBotPrefix)
-                );
                 break;
             case "STATIC_BACKGROUND":
                 gameButton.switchCheckbox(Configuration.staticBackground);
@@ -766,15 +597,6 @@ export class DebugMenu extends DebugMenuBase {
                 GUI.showFloaterText(LocalizationManager.getString(
                     Configuration.showDebugItems ? "DEBUG_ITEMS_VISIBLE" : "DEBUG_ITEMS_HIDDEN"
                 ));
-                break;
-            case "Hide/show connection indicator":
-                gameButton.switchCheckbox(Configuration.showConnectionIndicator);
-                Configuration.showConnectionIndicator = !Configuration.showConnectionIndicator;
-                Configuration.save();
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("CONNECTION_INDICATOR", Configuration.showConnectionIndicator)
-                );
                 break;
             case "SLOW_MODE":
                 gameButton.switchCheckbox(Configuration.slowMode);
@@ -853,15 +675,6 @@ export class DebugMenu extends DebugMenuBase {
 
                 GUI.showFloaterText(
                     LocalizationManager.getStateString("FUTURE_EVENTS", Configuration.showFutureEvents)
-                );
-                break;
-            case "SKIP_STARR_DROP_ANIMATION":
-                gameButton.switchCheckbox(Configuration.skipRandomAnimation);
-                Configuration.skipRandomAnimation = !Configuration.skipRandomAnimation;
-                Configuration.save();
-
-                GUI.showFloaterText(
-                    LocalizationManager.getStateString("SKIP_RANDOM_ANIMATION", Configuration.skipRandomAnimation)
                 );
                 break;
             case "HIDE_LOBBY_INFO":
@@ -1087,9 +900,6 @@ export class DebugMenu extends DebugMenuBase {
         let text = button.getOriginalName();
 
         switch (text) {
-            case "Spawn Test Popup":
-                Debug.toggleUserImagesButtonPressed();
-                break;
             case "DVD Test": // be quiet about this
                 // Nothing ever happened here.
                 break;
@@ -1169,14 +979,6 @@ export class DebugMenu extends DebugMenuBase {
                 GUI.showFloaterText(
                     LocalizationManager.getStateString("BATTLE_INFO", Configuration.showBattleInfo)
                 );
-                break;
-            case "Show svo button":
-                button.switchCheckbox(Configuration.showSVOButton);
-
-                Configuration.showSVOButton = !Configuration.showSVOButton;
-                Configuration.save();
-
-                Debug.getSVOButton().visibility = Configuration.showSVOButton;
                 break;
             case "SHOW_BATTLE_PING":
                 button.switchCheckbox(Configuration.showBattlePing);
@@ -1289,9 +1091,6 @@ export class DebugMenu extends DebugMenuBase {
                 break;
             case "CHANGE_STATUS":
                 debugMenu.changeStatusButtonPressed(gameButton);
-                break;
-            case "FUN":
-                debugMenu.funButtonPressed(gameButton);
                 break;
             case "GFX":
             case "PRC_CHINA":

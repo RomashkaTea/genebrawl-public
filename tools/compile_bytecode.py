@@ -1,5 +1,7 @@
 import frida
 
-data = open("dist/bundle.js", "r", encoding="utf-8").read()
+with open("dist/bundle.js", "r", encoding="utf-8") as file:
+    data = file.read()
 
-open(f"dist/libgene.script.so", "wb").write(frida.attach(0).compile_script(data))
+    with open("dist/libgene.script.so", "wb") as script:
+        script.write(frida.attach(0).compile_script(data))

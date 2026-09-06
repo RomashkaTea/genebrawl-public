@@ -60,30 +60,20 @@ export class GeneAssets {
             const path = Path.getUpdatePath() + file.path;
             console.log(path, Filesystem.doesFileExist(path));
             if (!Filesystem.doesFileExist(path) && file.url != "") {
-                if (LogicDefines.isPlatformIOS()) { //not working on Android
+                GeneAssets.downloadAsset(file.url).then((response) => {
+                    if (response.getStatusCode() !== 200) {
+                        console.warn("GeneAssets.preloadAssets:", "Server thrown", response.getStatusCode(), "code when tried to download", file.path, "asset. Skipping it!");
+                        NativeDialog.showNativeDialog(NULL, "Error", `Failed to load ${file.path} asset from server. Status code: ${response.getStatusCode()}`, "OK");
+                        return;
+                    }
 
-                    const splitPath = path.split("/");
-                    Filesystem.createDirectoryIfNotExist(Path.getUpdatePath() + splitPath[splitPath.length - 2] + "/");
+                    const body = response.getBody();
+                    Filesystem.writeToFile(path, body);
 
-                    GeneAssets.downloadAssetNative(file.url, path);
+                    console.log("GeneAssets.preloadAssets: Downloaded asset", file.path.split("/").slice(-1)[0]);
+
                     GeneAssets.downloaded.push(file.path);
-                }
-                else {
-                    GeneAssets.downloadAsset(file.url).then((response) => {
-                        if (response.getStatusCode() !== 200) {
-                            console.warn("GeneAssets.preloadAssets:", "Server thrown", response.getStatusCode(), "code when tried to download", file.path, "asset. Skipping it!");
-                            NativeDialog.showNativeDialog(NULL, "Error", `Failed to load ${file.path} asset from server. Status code: ${response.getStatusCode()}`, "OK");
-                            return;
-                        }
-
-                        const body = response.getBody();
-                        Filesystem.writeToFile(path, body);
-
-                        console.log("GeneAssets.preloadAssets: Downloaded asset", file.path.split("/").slice(-1)[0]);
-
-                        GeneAssets.downloaded.push(file.path);
-                    });
-                }
+                });
             } else {
                 GeneAssets.downloaded.push(file.path);
             }
@@ -120,12 +110,5 @@ export class GeneAssets {
         return client.sendRequest(url, "GET", {
             'User-Agent': `Gene Brawl ${LogicVersion.scriptEnvironment.toUpperCase()}/${LogicVersion.toDebugString()} (${Application.getDeviceType()})`
         });
-    }
-
-    private static downloadAssetNative(url: string, path: string) {
-        const nativeHttpClient = new NativeHTTPClient();
-      //  nativeHttpClient.downloadFile(url, path);
-
-        console.log("[*] downloading", url, "to", path);
     }
 }
