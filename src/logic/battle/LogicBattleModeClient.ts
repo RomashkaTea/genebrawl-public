@@ -1,18 +1,13 @@
 
 import {Libg} from "../../libs/Libg";
 import {LogicTileMap} from "./level/LogicTileMap";
-import {LogicPlayer} from "./LogicPlayer";
 
 const LogicBattleModeClient_getOwnCharacter = new NativeFunction( // "spray_def_atk" (not sure)
     Libg.offset(0x9C4330, 0x4B7480), 'pointer', ['pointer']
 );
 
-const LogicBattleModeClient_ownPlayerIndexOffset = 224;
-const LogicBattleModeClient_ownPlayerTeamOffset = 228;
 const LogicBattleModeClient_tileMapOffset = 248;
-const LogicBattleModeClient_currentBattleStateOffset = 284;
-export const LogicBattleModeClient_gameModeVariationOffset = 292;
-export const LogicBattleModeClient_underdogOffset = 334;
+const LogicBattleModeClient_underdogOffset = 334;
 
 export class LogicBattleModeClient {
     static self: LogicBattleModeClient;

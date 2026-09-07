@@ -5,7 +5,6 @@ import {CSVRow} from "../../titan/logic/csv/CSVRow";
 import {StringTable} from "./StringTable";
 
 const globalIdOffset = 32;
-const outlineShaderOffset = 120; // "OutlineShader"
 const LogicCharacterData_soundOffsetStart = 256;
 const LogicSkinConfDataData_soundOffsetStart = 600;
 
@@ -21,10 +20,6 @@ const LogicCharacterData_createReferences = new NativeFunction( // "Character ha
 
 const LogicSkinConfData_createReferences = new NativeFunction( // "TransformWhenOvercharged" (resetStatics) then its xref
     Libg.offset(0x8E9D88, 0x417690), 'void', ['pointer']
-);
-
-const LogicSkinData_createReferences = new NativeFunction( // "OutlineShader"
-    Libg.offset(-1, -1), 'void', ['pointer']
 );
 
 const EmoteIcon_playAnim = new NativeFunction( // "emote_in_use_ph"

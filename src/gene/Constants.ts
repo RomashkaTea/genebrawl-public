@@ -3,8 +3,6 @@ export class Constants {
     static DARK_THEME_REPLACEMENT = "Arcade"; // Replace if disabled
     static DARK_THEME_SHOWDOWN_REPLACEMENT = "ArcadeShowdown";
 
-    static UNAVAILABLE_KEY_STRING = "unavailable :(";
-
     static ANTIPROFANITY_BYTES = "\uFE00";
 
     static COMBATHUD_ALPHA_OFFSETS: number[] = [

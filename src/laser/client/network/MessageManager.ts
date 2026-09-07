@@ -160,9 +160,6 @@ Account tier: ${message.getAccountTier()}
     }
 
     private static onOwnHomeDataMessageReceived(message: OwnHomeDataMessage) {
-        BattleMode.xrayTargetGlobalId = -1;
-        BattleMode.xrayTargetPlayerIndex = -1;
-
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
         UsefulInfo.setBattlePing(-1);
@@ -224,11 +221,6 @@ Account tier: ${message.getAccountTier()}
     }
 
     private static onBattleEndMessageReceived(message: BattleEndMessage) {
-        BattleMode.xrayTargetGlobalId = -1;
-        BattleMode.xrayTargetPlayerIndex = -1;
-
-        Debug.getDebugMenu()?.removeCategory(EDebugCategory.XRAY);
-
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
         UsefulInfo.setBattlePing(-1);

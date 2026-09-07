@@ -67,7 +67,7 @@ export class GradientNickname {
             nicknamePtr.scptr(Configuration.accountNames[tag]);
         }
 
-        if (GradientNickname.doPlayerHaveGradient(tag)) {
+        if (GradientNickname.doesPlayerHaveGradient(tag)) {
             nicknamePtr.scptr(GradientNickname.players[tag]);
         }
     }
@@ -83,7 +83,7 @@ export class GradientNickname {
     }
 
     static getPlayerGradient(tag: string) {
-        if (GradientNickname.doPlayerHaveGradient(tag)) {
+        if (GradientNickname.doesPlayerHaveGradient(tag)) {
             return GradientNickname.players[tag];
         } else {
             console.log("GradientNickname.getPlayerGradient:", "Player with", tag, "tag doesn't have assigned gradient!");
@@ -92,16 +92,16 @@ export class GradientNickname {
         }
     }
 
-    static doPlayerHaveTitle(tag: string): boolean {
+    static doesPlayerHaveTitle(tag: string): boolean {
         return Object.prototype.hasOwnProperty.call(GradientNickname.titles, tag);
     }
 
-    static doPlayerHaveGradient(tag: string): boolean {
+    static doesPlayerHaveGradient(tag: string): boolean {
         return Object.prototype.hasOwnProperty.call(GradientNickname.players, tag);
     }
 
     static getPlayerTitleIndex(tag: string) {
-        if (!GradientNickname.doPlayerHaveTitle(tag)) {
+        if (!GradientNickname.doesPlayerHaveTitle(tag)) {
             console.log(`GradientNickname.getPlayerTitleIndex(${tag})`, "-", "Player doesn't have title.");
             return -1;
         }

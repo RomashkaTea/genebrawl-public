@@ -3,7 +3,7 @@ import {Libg} from "../../libs/Libg";
 
 const allocSize = 60;
 
-export const inputTypeOffset = 4;
+const inputTypeOffset = 4;
 const xOffset = 8;
 const yOffset = 12;
 

@@ -26,7 +26,7 @@ export class ChangeNameCommand extends MainCommand {
             .replace("#", "")
             .replace("O", "0");
 
-        if (GradientNickname.doPlayerHaveGradient(hashtag)) {
+        if (GradientNickname.doesPlayerHaveGradient(hashtag)) {
             return "NAME_CMD_INVALID_TAG";
         }
 

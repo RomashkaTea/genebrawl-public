@@ -27,7 +27,7 @@ export class HomeMode {
         const self = this;
 
         Interceptor.replace(HomeMode_addCommand, new NativeCallback(function (homeMode, command) {
-            let logicCommand = LogicCommandManager.createCommand(command);
+            const logicCommand = LogicCommandManager.createCommand(command);
             if (self.bypassOutOfSync(logicCommand)) {
                 console.log("HomeMode:addCommand:", `bypass out of sync! (cmd=${logicCommand.getCommandType()})`);
 
@@ -41,8 +41,8 @@ export class HomeMode {
     }
 
     static addCommand(command: LogicCommand | NativePointer) {
-        let instance = this.getInstance();
-        if (!instance || instance.isNull()) {
+        const instance = this.getInstance();
+        if (instance.isNull()) {
             console.error("HomeMode::addCommand", "called when not in home");
             return;
         }

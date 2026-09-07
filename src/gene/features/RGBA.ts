@@ -10,15 +10,6 @@ export class RGBA {
         return hexNumber >>> 0;
     }
 
-    static hex(hexNumber: number) {
-        const alpha = (hexNumber >> 24) & 255;
-        const red = (hexNumber >> 16) & 255;
-        const green = (hexNumber >> 8) & 255;
-        const blue = hexNumber & 255;
-
-        return { r: red, g: green, b: blue, a: alpha };
-    }
-
     static red = RGBA.color(255, 0, 0);
     static green = RGBA.color(0, 255, 0);
     static blue = RGBA.color(0, 0, 255);

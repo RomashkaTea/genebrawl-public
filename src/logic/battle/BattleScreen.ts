@@ -15,10 +15,6 @@ const BattleScreen_enter = new NativeFunction( // "land_zone"
     Libg.offset(0x6C5F50, 0x25F024), 'void', ['pointer']
 );
 
-const BattleScreen_getIntroCameraTimeLeft = new NativeFunction( // "tutorial_step"
-    Libg.offset(0x485820, 0x260C30), 'float', ['pointer']
-);
-
 const BattleScreen_isAFK = new NativeFunction(
     Libg.offset(0x6D4C7C, 0x26C098), 'bool', ['pointer']
 );
@@ -28,7 +24,6 @@ const BattleScreen_cameraFunc = new NativePointer(
 );
 
 const afkWarningOffset = 2984;
-const shootStickActiveOffset = 3553;
 const combatHudOffset = 2232;
 const sideMaskSidesOffsets = [256, 264, 272, 280];
 const cameraFieldsOffset = 2024;
@@ -157,17 +152,5 @@ export class BattleScreen {
 
             return isAfk;
         }, 'bool', ['pointer']));
-    }
-
-    static tickXray(battleScreen: NativePointer) {
-        // you have to implement this by yourself.
-    }
-
-    static getIntroCameraTimeLeft() {
-        return BattleScreen_getIntroCameraTimeLeft(this.getInstance());
-    }
-
-    private static isShootStickActive(battleScreen: NativePointer): boolean {
-        return Boolean(battleScreen.add(shootStickActiveOffset).readU8());
     }
 }

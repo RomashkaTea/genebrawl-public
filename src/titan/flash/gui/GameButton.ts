@@ -24,7 +24,7 @@ export class GameButton extends CustomButton {
     }
 
     getText(): string {
-        let textField = this.getMovieClip().getTextFieldByName("Text");
+        const textField = this.getMovieClip().getTextFieldByName("Text");
 
         return textField!.getStringObject();
     }
@@ -65,7 +65,7 @@ export class GameButton extends CustomButton {
     }
 
     setText(txt: string): void {
-        let setTextVtableAddress = this.vtable.add(setTextVtableOffset).readPointer();
+        const setTextVtableAddress = this.vtable.add(setTextVtableOffset).readPointer();
 
         new NativeFunction(setTextVtableAddress, 'void', ['pointer', 'pointer', 'bool'])(this.instance, txt.scptr(), 1);
     }

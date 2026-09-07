@@ -1,4 +1,3 @@
-import {LogicDefines} from "../../LogicDefines";
 import {Configuration} from "../Configuration";
 import {Debug} from "../Debug";
 import {DebugHudMessageCollector} from "../debug/DebugHudMessageCollector";
@@ -6,15 +5,8 @@ import {MessageManager} from "../../laser/client/network/MessageManager";
 import {LocalizationManager} from "../../gene/localization/index";
 import {LogicVersion} from "../../logic/LogicVersion";
 
-const dividerOffset = LogicDefines.isPlatformIOS() ? 608 : 624;
-const framesOffset = LogicDefines.isPlatformIOS() ? 604 : 620;
-
 export class UsefulInfo {
-    private static getDivider = (instance: NativePointer) => instance.add(dividerOffset).readInt();
-    private static getFrames = (instance: NativePointer) => instance.add(framesOffset).readFloat();
     private static normalizeNumber = (number: number) => number < 10 ? `0${number}` : number;
-    private static oldFPS: Array<number> = [];
-    private static currentFps: number = 0;
     private static battleInfo: string = "";
     private static battlePing: number = -1;
     private static secondsSinceLastUpdate: number = Math.round(new Date().getTime() / 1000);
@@ -27,13 +19,6 @@ export class UsefulInfo {
 
     static getFPS() {
         return this.frameCounter;
-    }
-
-    static updateOldFps(Instance: NativePointer) {
-        UsefulInfo.oldFPS = [
-            UsefulInfo.getDivider(Instance),
-            UsefulInfo.getFrames(Instance)
-        ];
     }
 
     static getCurrentTime() {
@@ -69,7 +54,8 @@ export class UsefulInfo {
             const messageCollector = new DebugHudMessageCollector();
 
             /// #if DEBUG
-            if (LogicVersion.isDeveloperBuild() && !UsefulInfo.disableDevBuildMessage) messageCollector.addMessage(`Gene Brawl DEV build [script: ${LogicVersion.getScriptVersion()}]`);
+            if (LogicVersion.isDeveloperBuild() && !UsefulInfo.disableDevBuildMessage)
+                messageCollector.addMessage(`Gene Brawl DEV build [script: ${LogicVersion.getScriptVersion()}]`);
             /// #endif
 
             const fps = UsefulInfo.getFPS();
@@ -83,8 +69,6 @@ export class UsefulInfo {
             if (Configuration.showCurrentTime) messageCollector.addMessage(UsefulInfo.getCurrentTime());
             if (Configuration.showSessionTime) messageCollector.addMessage(UsefulInfo.getSessionTime());
             if (Configuration.showTicks && this.ticks !== 0) messageCollector.addMessage("Ticks: " + this.ticks + ` (${Math.ceil(this.ticks / 20)} sec.)`);
-
-            //if (LogicVersion.isDeveloperBuild()) messageCollector.addMessage("Projectiles: " + this.projectilesAmount)
 
             if (MessageManager.ownPlayerTeam != -1 && Configuration.showTeam)
                 messageCollector.addMessage(`${LocalizationManager.getString("OWN_PLAYER_TEAM").format(

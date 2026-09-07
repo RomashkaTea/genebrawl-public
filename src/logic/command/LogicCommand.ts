@@ -1,5 +1,5 @@
 const executeVtableOffset = 3 * Process.pointerSize;
-export const getCommandTypeVtableOffset = 4 * Process.pointerSize;
+const getCommandTypeVtableOffset = 4 * Process.pointerSize;
 
 export class LogicCommand {
     instance: NativePointer;

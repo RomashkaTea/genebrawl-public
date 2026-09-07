@@ -22,7 +22,7 @@ export class CustomButton extends Sprite {
     }
 
     setMovieClip(movieClip: MovieClip | NativePointer): void {
-        let setMovieClipVtable = new NativeFunction(
+        const setMovieClipVtable = new NativeFunction(
             this.instance.readPointer().add(setMovieClipVtableOffset).readPointer(), 'void', ['pointer', 'pointer', 'bool']
         );
 

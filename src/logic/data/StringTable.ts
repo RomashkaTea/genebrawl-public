@@ -1,5 +1,4 @@
 import {LogicDefines} from "../../LogicDefines";
-import {Configuration} from "../../gene/Configuration";
 import {GradientNickname} from "../../gene/features/GradientNickname";
 import {Libg} from "../../libs/Libg";
 import {LogicVersion} from "../LogicVersion";
@@ -28,7 +27,7 @@ export class StringTable {
 
     static patch() {
         Interceptor.replace(StringTable_getString, new NativeCallback(function (tid) {
-            let str = tid.readUtf8String();
+            const str = tid.readUtf8String();
 
             switch (str) {
                 case "TID_CREDITS_BUTTON":

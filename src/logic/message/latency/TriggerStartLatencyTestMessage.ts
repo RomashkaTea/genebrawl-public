@@ -7,7 +7,7 @@ const regionIdOffset = 152;
 
 export class TriggerStartLatencyTestMessage extends PiranhaMessage {
     constructor(regionId: number) {
-        let instance = LogicLaserMessageFactory.createMessage(39003);
+        const instance = LogicLaserMessageFactory.createMessage(39003);
 
         instance.add(unk1Offset).writeInt(1);
         instance.add(unk2Offset).writeInt(1);

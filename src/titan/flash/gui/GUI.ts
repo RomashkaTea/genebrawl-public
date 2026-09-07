@@ -1,6 +1,5 @@
 import {RGBA} from "../../../gene/features/RGBA";
 import {Libg} from "../../../libs/Libg";
-import {DisplayObject} from "../DisplayObject";
 
 const GUI_instance = Libg.offset(0x103D910, 0xEE61B8); // "TID_TEAM_SEARCH_NO_TEAM_CODE"
 
@@ -37,8 +36,7 @@ export class GUI {
     }
 
     static showFloaterText(text: string, color: number = RGBA.white) {
-        let instance = this.instance;
-
+        const instance = this.instance;
         if (instance.isNull())
             return;
 
@@ -54,7 +52,7 @@ export class GUI {
     }
 
     static getTopPopup(): NativePointer {
-        let instance = this.instance;
+        const instance = this.instance;
         if (instance.isNull())
             return NULL;
 

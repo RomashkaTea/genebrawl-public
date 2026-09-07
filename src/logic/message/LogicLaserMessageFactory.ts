@@ -23,7 +23,7 @@ export class LogicLaserMessageFactory {
     }
 
     static createMessageByType(instance: NativePointer): PiranhaMessage {
-        let messageType = PiranhaMessage.getMessageType(instance);
+        const messageType = PiranhaMessage.getMessageType(instance);
 
         switch (messageType) {
             case 20103:

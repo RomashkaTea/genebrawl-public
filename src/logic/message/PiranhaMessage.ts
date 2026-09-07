@@ -3,8 +3,7 @@
 const encodeVtableOffset = 2 * Process.pointerSize;
 const decodeVtableOffset = 3 * Process.pointerSize;
 const getServiceNodeTypeOffset = 4 * Process.pointerSize;
-export const getMessageTypeVtableOffset = 5 * Process.pointerSize;
-const byteStreamOffset = Process.pointerSize;
+const getMessageTypeVtableOffset = 5 * Process.pointerSize;
 const messageVersionOffset = 136;
 
 export class PiranhaMessage {

@@ -23,48 +23,10 @@ export class Filesystem {
         }
     }
 
-    static readDirectory(directory: string) {
-        const dir = Libc.opendir(directory);
-        const content: string[] = [];
-
-        if (dir.isNull()) return content;
-
-        let dirent = Libc.readdir(dir);
-
-        while (!dirent.isNull()) {
-            const dName = dirent.add(19).readUtf8String();
-            const dType = dirent.add(18).readU8();
-
-            if (!dName?.startsWith(".")) {
-                content.push(dName!);
-            }
-
-            dirent = Libc.readdir(dir);
-        }
-
-        Libc.closedir(dir);
-
-        return content;
-    }
-
     static doesFileExist(path: string) {
         return Libc.access(path) !== -1;
     }
 
-    static readFile(path: string) {
-        try {
-            const file = new File(path, 'r');
-
-            const content = file.readBytes();
-
-            file.close();
-
-            return content;
-        } catch (e) {
-            return null;
-        }
-    }
-    
     static createDirectoryIfNotExist(path: string) {
         const directories = path.split("/");
 
@@ -75,9 +37,5 @@ export class Filesystem {
                 Path.mkdir(mergedPath);
             }
         }
-    }
-
-    static removeFile(path: string) {
-        return Libc.remove(path);
     }
 }

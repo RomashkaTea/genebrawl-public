@@ -1,6 +1,5 @@
 import {Libg} from "../../libs/Libg";
 import {LogicData} from "./LogicData";
-import {GeneAssets} from "../../gene/GeneAssets";
 
 const LogicThemeData_isDisabled = new NativeFunction( // "Active theme is marked disabled! theme:"
     Libg.offset(0x8F2C98, 0x41EFD8), 'bool', ['pointer']

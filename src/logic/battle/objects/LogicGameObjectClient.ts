@@ -1,5 +1,5 @@
 
-export const dataOffset = 16;
+const dataOffset = 16;
 
 const xOffset = 48;
 const yOffset = 52;

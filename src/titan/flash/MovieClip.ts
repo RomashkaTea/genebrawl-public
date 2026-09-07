@@ -60,13 +60,13 @@ export class MovieClip extends Sprite {
     getChildByName(name: string): MovieClip {
         return new MovieClip(
             MovieClip_getChildByName(this.instance, name.ptr())
-        ); 
+        );
     }
 
     getChildById(index: number): MovieClip {
         return new MovieClip(
             this.instance.add(MovieClip_childrenArray).readPointer().add(index * Process.pointerSize).readPointer()
-        ); 
+        );
     }
 
     getChildAmount() {
@@ -92,7 +92,7 @@ export class MovieClip extends Sprite {
     getNameOfChild (child: MovieClip) {
         const str = NULL;
         const childName = MovieClip_getNameOfChild(this.instance, child.instance, str)
-        
+
         try {
             return childName.readUtf8String()
         } catch (e) {
@@ -101,7 +101,7 @@ export class MovieClip extends Sprite {
     }
 
     getTextFieldByName(name: string) {
-        let ptr = MovieClip_getTextFieldByName(this.instance, name.ptr());
+        const ptr = MovieClip_getTextFieldByName(this.instance, name.ptr());
         return !ptr.isNull() ? new TextField(ptr) : null;
     }
 

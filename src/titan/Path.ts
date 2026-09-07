@@ -20,9 +20,10 @@ export class Path {
 
     static getResourcePath(): string {
         if (ObjC.available) {
-            var NSBundle = ObjC.classes.NSBundle;
-            var mainBundle = NSBundle.mainBundle();
-            var bundlePath = mainBundle.bundlePath().toString();
+            const NSBundle = ObjC.classes.NSBundle;
+            const mainBundle = NSBundle.mainBundle();
+            const bundlePath = mainBundle.bundlePath().toString();
+
             return bundlePath + "/res/";
         } else {
             return "";

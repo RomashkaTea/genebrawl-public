@@ -49,18 +49,6 @@ export class DebugMenu extends DebugMenuBase {
     private darkThemeTimeout: NodeJS.Timeout = setTimeout(() => { }, 1);
     private isDarkThemeSwitchBegan: boolean = false;
 
-    private static notImplementedFunctions: string[] = [
-
-    ];
-
-    private static notImplementedIOSFunctions: string[] = [
-
-    ];
-
-    private static notImplementedAndroidFunctions: string[] = [
-
-    ];
-
     private static dangerousFunctions: string[] = [
         "BYPASS_ANTI_PROFANITY"
     ];
@@ -338,18 +326,6 @@ export class DebugMenu extends DebugMenuBase {
         this.buttons = buttons.concat(categories);
 
         this.shouldUpdateLayout = true;
-    }
-
-    private static isNotImplemented(name: string): boolean {
-        return DebugMenu.notImplementedFunctions.includes(name);
-    }
-
-    private static isNotImplementedForIOS(name: string): boolean {
-        return DebugMenu.notImplementedIOSFunctions.includes(name);
-    }
-
-    private static isNotImplementedForAndroid(name: string): boolean {
-        return DebugMenu.notImplementedAndroidFunctions.includes(name);
     }
 
     private accountButtonPressed(button: GameButton) {
@@ -1011,54 +987,7 @@ export class DebugMenu extends DebugMenuBase {
         }
     }
 
-    private xrayButtonPressed(button: GameButton) {
-        let text = button.getOriginalName();
-
-        // text - playerName
-
-        if (text == "Disable X-Ray") {
-            GUI.showFloaterText(
-                LocalizationManager.getString("XRAY_OFF")
-            );
-
-            BattleMode.xrayTargetGlobalId = -1;
-            BattleMode.xrayTargetPlayerIndex = -1;
-
-            return;
-        }
-
-        BattleMode.setXrayTarget(text);
-    }
-
     isButtonAvailable(name: string): boolean {
-        if (DebugMenu.isNotImplemented(name)) {
-            if (LogicVersion.isDeveloperBuild()) {
-                console.warn("DebugMenu.isButtonAvailable", name, "is not implemented!");
-                return true;
-            }
-
-            GUI.showFloaterText(LocalizationManager.getString("NOT_IMPLEMENTED_YET"));
-            return false;
-        }
-
-        if (LogicDefines.isPlatformAndroid() && DebugMenu.isNotImplementedForAndroid(name)) {
-            if (LogicVersion.isDeveloperBuild()) {
-                console.warn("DebugMenu.isButtonAvailable", name, "is not implemented for Android!");
-            }
-
-            GUI.showFloaterText(LocalizationManager.getString("NOT_IMPLEMENTED_YET_ANDROID"));
-            return false;
-        }
-
-        if (LogicDefines.isPlatformIOS() && DebugMenu.isNotImplementedForIOS(name)) {
-            if (LogicVersion.isDeveloperBuild()) {
-                console.warn("DebugMenu.isButtonAvailable", name, "is not implemented for iOS!");
-            }
-
-            GUI.showFloaterText(LocalizationManager.getString("NOT_IMPLEMENTED_YET_IOS"));
-            return false;
-        }
-
         return true;
     }
 
@@ -1122,9 +1051,6 @@ export class DebugMenu extends DebugMenuBase {
                 break;
             case "USEFUL_INFO":
                 debugMenu.usefulInfoButtonPressed(gameButton);
-                break;
-            case "XRAY":
-                debugMenu.xrayButtonPressed(gameButton);
                 break;
             case "MISC":
                 debugMenu.miscButtonPressed(gameButton);

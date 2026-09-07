@@ -76,7 +76,8 @@ export class LogicDataTables {
     }
 
     static patchClientGlobals() {
-        let clientGlobals = this.getClientGlobals();
+        const clientGlobals = this.getClientGlobals();
+
         clientGlobals.add(LogicClientGlobals_useNewBattleIntroOffset).writeU8(Configuration.useOldIntro ? 0 : 1);
     }
 

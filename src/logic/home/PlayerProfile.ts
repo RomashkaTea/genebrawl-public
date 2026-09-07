@@ -67,7 +67,7 @@ export class PlayerProfile {
 
             let dataRef = new LogicPlayerTitleData(playerProfile.add(titleDataOffset).readPointer());
 
-            if (GradientNickname.doPlayerHaveTitle(playerTag)) {
+            if (GradientNickname.doesPlayerHaveTitle(playerTag)) {
                 dataRef = new LogicPlayerTitleData(LogicDataTables.getByGlobalId(GlobalID.createGlobalID(76, 83)));
 
                 playerProfile.add(titleDataOffset).writePointer(dataRef.instance);

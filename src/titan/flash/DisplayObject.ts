@@ -1,10 +1,5 @@
 import {Libg} from "../../libs/Libg";
 
-export interface DisplayObject {
-    instance: NativePointer
-    vtable: NativePointer
-}
-
 const xOffset = 32;
 const yOffset = 36;
 
@@ -35,6 +30,9 @@ const DisplayObject_setHeight = new NativeFunction(
 )
 
 export class DisplayObject {
+    instance: NativePointer
+    vtable: NativePointer
+
     constructor(instance: NativePointer) {
         this.instance = instance;
         this.vtable = this.instance.readPointer();

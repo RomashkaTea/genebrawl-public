@@ -1,12 +1,11 @@
 import {Libc} from "../libs/Libc";
-import {LogicVersion} from "../logic/LogicVersion";
 import ObjC from "frida-objc-bridge";
 
 export class PackageInfo {
     static getPackageName(): string | null {
-        let fd = Libc.open("/proc/self/cmdline", 0, "r");
+        const fd = Libc.open("/proc/self/cmdline", 0, "r");
         if (fd != -1) {
-            let buffer = Memory.alloc(256);
+            const buffer = Memory.alloc(256);
 
             Libc.read(fd, buffer, 256);
             Libc.close(fd);

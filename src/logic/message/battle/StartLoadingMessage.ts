@@ -37,8 +37,8 @@ export class StartLoadingMessage extends PiranhaMessage {
     }
 
     getPlayersArray(): LogicPlayer[] {
-        let array = this.getPlayers();
-        let arr: LogicPlayer[] = [];
+        const array = this.getPlayers();
+        const arr: LogicPlayer[] = [];
 
         for (let i = 0; i < this.getPlayersCount(); i++) {
             arr.push(new LogicPlayer(

@@ -10,8 +10,8 @@ const LogicPlayer_decode = new NativeFunction( // 20559 decode
     Libg.offset(0x9EAB50, 0x4CA608), 'void', ['pointer', 'pointer']
 );
 
-export const battleCard_titleOffset = 40;
-export const battleCard = 440;
+const battleCard_titleOffset = 40;
+const battleCard = 440;
 
 const playerIndexOffset = 8;
 const teamIndexOffset = 12;
@@ -88,7 +88,7 @@ export class LogicPlayer {
 
             const playerDisplayData = self.getPlayerDisplayData(logicPlayer);
 
-            if (GradientNickname.doPlayerHaveTitle(playerTag)) {
+            if (GradientNickname.doesPlayerHaveTitle(playerTag)) {
                 let dataRef = new LogicPlayerTitleData(LogicDataTables.getByGlobalId(GlobalID.createGlobalID(76, 83)));
 
                 self.setTitle(logicPlayer, dataRef.instance);
