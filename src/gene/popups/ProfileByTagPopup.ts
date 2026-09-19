@@ -72,8 +72,7 @@ export class ProfileByTagPopup extends GenericPopup {
 
     private buttonClicked(listener: NativePointer, button: NativePointer) {
         const popup = Storage.popups.find(e => e instanceof ProfileByTagPopup) as ProfileByTagPopup;
-
-        if (popup.button.instance.toInt32() == button.toInt32()) {
+        if (popup.button.instance.equals(button)) {
             const gameInputField = popup.gameInputField;
             const input = gameInputField.getInputText().trim().toUpperCase();
 
@@ -107,7 +106,7 @@ export class ProfileByTagPopup extends GenericPopup {
             popup.fadeOut();
             Storage.removePopupByInstance(popup.instance);
         }
-        else if (popup.closeButton!.instance.toInt32() == button.toInt32()) {
+        else if (popup.closeButton!.instance.equals(button)) {
             console.log("Closed!");
             popup.gameInputField.activate(false);
             popup.fadeOut();

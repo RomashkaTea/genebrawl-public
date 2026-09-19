@@ -72,7 +72,7 @@ export class SpectateByTagPopup extends GenericPopup {
     private buttonClicked(listener: NativePointer, button: NativePointer) {
         const popup = Storage.popups.find(e => e instanceof SpectateByTagPopup) as SpectateByTagPopup;
 
-        if (popup.button.instance.toInt32() == button.toInt32()) {
+        if (popup.button.instance.equals(button)) {
             const gameInputField = popup.gameInputField;
             const input = gameInputField.getInputText().trim().toUpperCase();
 

@@ -74,7 +74,7 @@ export class OpenUrlPopup extends GenericPopup {
 
         const gameInputField = popup.gameInputField;
 
-        if (popup.button.instance.toInt32() == button.toInt32()) {
+        if (popup.button.instance.equals(button)) {
             const gameInputField = popup.gameInputField;
             const input = gameInputField.getInputText().trim();
 
@@ -104,7 +104,7 @@ export class OpenUrlPopup extends GenericPopup {
             popup.fadeOut();
             Storage.removePopupByInstance(popup.instance);
         }
-        else if (popup.closeButton!.instance.toInt32() == button.toInt32()) {
+        else if (popup.closeButton!.instance.equals(button)) {
             console.log("Closed!");
             popup.gameInputField.activate(false);
             popup.fadeOut();
