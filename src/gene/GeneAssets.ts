@@ -87,7 +87,7 @@ export class GeneAssets {
 
         const assignment = GeneAssets.assignments[assetName];
 
-        if (GeneAssets.wasLoaded(assignment.path)) {
+        if (!GeneAssets.wasLoaded(assignment.path)) {
             console.warn("GeneAssets.getAsset:", assignment.path, "wasn't loaded successfully!");
         }
 
