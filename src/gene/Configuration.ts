@@ -1,6 +1,5 @@
 import {Path} from "../titan/Path";
 import {Constants} from "./Constants";
-import {NCoder} from "./networking/NetworkManager";
 
 const DO_NOT_SAVE_KEYS = [
     "isChinaVersion"
@@ -85,7 +84,7 @@ export class Configuration {
         try {
             let json = File.readAllText(path);
 
-            let decryptedJson = JSON.parse(NCoder.n2s(json));
+            let decryptedJson = JSON.parse(json);
 
             for (let key in decryptedJson) {
                 (<any>this)[key] = decryptedJson[key];
@@ -109,7 +108,7 @@ export class Configuration {
         let path = Path.getDataPath() + "settings.json";
         let json = this.toJSON();
 
-        let encryptedJson = JSON.stringify(NCoder.s2n(json));
+        let encryptedJson = JSON.stringify(json);
 
         this.writeToFile(path, "w", encryptedJson);
 
