@@ -26,8 +26,7 @@ export class ClientInput {
         }
 
         this.instance = Libc.malloc(allocSize);
-
-        ClientInput_ctor(this.instance, this.inputType);
+        ClientInput_ctor(this.instance, inputType);
     }
 
     setXY(x: number, y: number) {
