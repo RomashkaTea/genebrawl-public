@@ -106,11 +106,8 @@ export class Configuration {
 
     static save() {
         let path = Path.getDataPath() + "settings.json";
-        let json = this.toJSON();
 
-        let encryptedJson = JSON.stringify(json);
-
-        this.writeToFile(path, "w", encryptedJson);
+        this.writeToFile(path, "w", this.toJSON());
 
         console.log("Configuration.save:", "saved successfully!");
     }
