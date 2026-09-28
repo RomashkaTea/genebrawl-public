@@ -61,12 +61,12 @@ export class CombatHUD {
             }
 
             const connectionIndicatorClip = combatHud.add(CombatHUD_connectionIndicatorOffset).readPointer();
-            if (connectionIndicatorClip) {
+            if (!connectionIndicatorClip.isNull()) {
                 connectionIndicatorClip.add(Process.pointerSize).writeU8(1);
             }
 
             const txtDebugClip = combatHud.add(CombatHUD_txtDebugOffset).readPointer();
-            if (txtDebugClip && LogicVersion.isDeveloperBuild()) {
+            if (!txtDebugClip.isNull() && LogicVersion.isDeveloperBuild()) {
                 txtDebugClip.add(Process.pointerSize).writeU8(1);
             }
 

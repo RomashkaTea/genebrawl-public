@@ -15,7 +15,7 @@ const movieClipOffset = 96;
 
 export class GameButton extends CustomButton {
     constructor(ptr?: NativePointer) {
-        if (!ptr) {
+        if (!ptr || (ptr && ptr.isNull())) {
             ptr = Libc.malloc(524);
             GameButton_GameButton(ptr);
         }

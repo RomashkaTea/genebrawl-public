@@ -52,11 +52,10 @@ export class PopupBase extends DropGUIContainer {
         this.fadeOutFunc = new NativeFunction(this.vtable.add(fadeOutVtableOffset).readPointer(), 'void', ['pointer']);
         this.updateFunc = new NativeFunction(this.vtable.add(updateVtableOffset).readPointer(), 'void', ['pointer', 'float']);
 
-        try {
-            const closeButton = this.instance.add(closeButtonOffset);
-            if (closeButton)
-                this.closeButton = new GameButton(closeButton);
-        } catch (e) { console.error(e); }
+        const closeButtonPtr = this.instance.add(closeButtonOffset);
+        if (!closeButtonPtr.isNull()) {
+            this.closeButton = new GameButton(closeButtonPtr);
+        }
     }
 
     fadeOut() {

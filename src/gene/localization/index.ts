@@ -32,7 +32,7 @@ export class LocalizationManager {
 
         if (LocalizationManager.localization[LocalizationManager.defaultLanguage]) {
             console.log("LocalizationManager.getString:", str, "doesn't exist in", LocalizationManager.selectedLanguage, "localization. Selecting from default one:", LocalizationManager.defaultLanguage);
-            return LocalizationManager.localization[LocalizationManager.defaultLanguage];
+            return LocalizationManager.locales[LocalizationManager.defaultLanguage][str];
         }
 
         //console.log("LocalizationManager.getString:", str, "is unknown.");

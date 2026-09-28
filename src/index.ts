@@ -114,8 +114,6 @@ function printInfo() {
     console.log("Platform:", LogicDefines.toString());
     console.log("Device: " + Application.getDeviceType());
     console.log("System version: " + Application.getSystemVersion());
-    if (LogicDefines.isPlatformIOS())
-        console.log("iOS version: " + LogicVersion.iosVersion);
 }
 
 function setupNetwork() {
@@ -235,10 +233,6 @@ rpc.exports.init = function (stage, parameters) {
         /// #if DEBUG
         initErrorHandler();
         /// #endif
-
-        if (LogicDefines.isPlatformIOS()) {
-            LogicVersion.iosVersion = PackageInfo.getValue("GENE_BRAWL_IOS_VERSION") ?? 0;
-        }
 
         printInfo();
 

@@ -14,7 +14,6 @@ type ScriptEnvironment = "dev" | "prod";
 
 export class LogicVersion {
     static readonly scriptEnvironment: ScriptEnvironment = process.env.SCRIPT_ENV as ScriptEnvironment;
-    static iosVersion: number = 0;
 
     static isProd(): boolean {
         return this.scriptEnvironment == "prod";
@@ -25,13 +24,6 @@ export class LogicVersion {
     }
     static getScriptVersion(): number {
         return scriptVersion;
-    }
-
-    static areNewFeaturesAllowed(version: number): boolean {
-        if (LogicDefines.isPlatformAndroid()) return true;
-        if (LogicVersion.isDeveloperBuild()) return true;
-
-        return LogicVersion.iosVersion >= version;
     }
 
     static patch() {

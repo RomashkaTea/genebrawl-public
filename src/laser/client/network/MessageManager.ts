@@ -124,23 +124,17 @@ export class MessageManager {
     }
 
     private static onLoginOkMessageReceived(message: LoginOkMessage) {
-        try {
-            console.log(`Logged in! (account id ${message.getAccountId().join('-')}, server env ${message.getServerEnvironment()})`);
+        console.log(`Logged in! (account id ${message.getAccountId().join('-')}, server env ${message.getServerEnvironment()})`);
 
-            this.accountInfo =
-                `Account ID: ${message.getAccountId().join("-")}
-Server Version: ${message.getServerVersion()}
-Server Environment: ${message.getServerEnvironment()}
-Session Count: ${message.getSessionCount()}
-Playtime: ${message.getPlaytimeSeconds()}
-Days since started playing: ${message.getDaysSinceStartedPlaying()}
-Account tier: ${message.getAccountTier()}
-`;
-            let accountId = message.getAccountId();
-        }
-        catch (e) {
-
-        }
+        this.accountInfo =
+            `Account ID: ${message.getAccountId().join("-")}
+  Server Version: ${message.getServerVersion()}
+  Server Environment: ${message.getServerEnvironment()}
+  Session Count: ${message.getSessionCount()}
+  Playtime: ${message.getPlaytimeSeconds()}
+  Days since started playing: ${message.getDaysSinceStartedPlaying()}
+  Account tier: ${message.getAccountTier()}
+  `;
 
         let languageCode = StringTable.getCurrentLanguageCode();
 
@@ -163,9 +157,6 @@ Account tier: ${message.getAccountTier()}
         this.ownPlayerTeam = -1;
         UsefulInfo.setBattleInfo("");
         UsefulInfo.setBattlePing(-1);
-
-        if (!LogicVersion.areNewFeaturesAllowed(0))
-            setTimeout(() => GUI.showFloaterText(LocalizationManager.getString("IOS_TOO_OLD")), 4000);
 
         if (Configuration.antiOutOfSync)
             setTimeout(() => GUI.showFloaterText(LocalizationManager.getString("ANTI_OUT_OF_SYNC")), 2000);

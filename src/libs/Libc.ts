@@ -12,7 +12,7 @@ export class Libc {
     static getaddrinfo = new NativeFunction(Module.getGlobalExportByName("getaddrinfo")!, 'int', ['pointer', 'pointer', 'pointer', 'pointer']);
     static close = new NativeFunction(Module.getGlobalExportByName("close")!, 'void', ['int']);
     static free = new NativeFunction(Module.getGlobalExportByName("free")!, 'void', ['pointer']);
-    static malloc = new NativeFunction(Module.getGlobalExportByName("malloc")!, 'pointer', ['uint']);
+    static malloc = new NativeFunction(Module.getGlobalExportByName("malloc")!, 'pointer', ['size_t']);
 
     static open(pathname: string, flags: number, mode: string): number {
         let modes: { [name: string]: number; } = {
@@ -46,7 +46,8 @@ export class Libc {
         if (!this._sysctlbyname) {
             let exportPtr = Module.getGlobalExportByName("sysctlbyname");
             if (!exportPtr) return "";
-            this._sysctlbyname = new NativeFunction(exportPtr, 'int', ['pointer', 'pointer', 'pointer', 'pointer', 'int']);
+            // const char* name, void *oldp, size_t *oldlenp, void *newp, size_t newlen
+            this._sysctlbyname = new NativeFunction(exportPtr, 'int', ['pointer', 'pointer', 'pointer', 'pointer', 'size_t']);
         }
 
         let value = this.malloc(PROP_VALUE_MAX);
